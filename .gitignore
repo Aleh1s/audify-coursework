@@ -1,0 +1,8 @@
+
+# root
+/.idea/
+/Project.iml
+
+# frontend
+/frontend/package-lock.json
+/frontend/node_modules/
