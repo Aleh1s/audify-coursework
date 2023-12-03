@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# backend
+/backend/target/
+
+# frontend
+/frontend/node_modules/
+/frontend/package-lock.json
+
+# commons
+/.idea/
+/docker-compose.yml
