@@ -33,6 +33,9 @@
 
 # backend
 /backend/target/
+/backend/.mvn/
+/backend/mvnw
+/backend/mvnw.cmd
 
 # frontend
 /frontend/node_modules/
