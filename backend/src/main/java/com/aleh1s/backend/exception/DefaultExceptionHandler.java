@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
@@ -32,4 +33,27 @@ public class DefaultExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(apiError);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiError> handleException(ResourceNotFoundException e,
+                                                    HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                NOT_FOUND.value(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(NOT_FOUND).body(apiError);
+    }
+
+    @ExceptionHandler(InvalidResourceException.class)
+    public ResponseEntity<ApiError> handleException(InvalidResourceException e,
+                                                    HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(BAD_REQUEST).body(apiError);
+    }
 }

@@ -3,9 +3,16 @@ spring:
     url: jdbc:postgresql://localhost:5432/audify_db
     username: postgres
     password: 123
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 cors:
   allowed-origins: "*"
   allowed-methods: "*"
   allowed-headers: "*"
   exposed-headers: "*"
+
+image:
+  supported-extensions: "png,jpeg,jpg"

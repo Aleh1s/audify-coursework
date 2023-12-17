@@ -5,13 +5,13 @@ import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
 import com.aleh1s.backend.util.DtoMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RegistrationService {
 
