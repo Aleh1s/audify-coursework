@@ -3,3 +3,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/audify_db
     username: postgres
     password: 123
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  exposed-headers: "*"
