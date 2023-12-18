@@ -20,7 +20,7 @@ import static java.util.Objects.isNull;
 @Transactional(readOnly = true)
 public class ImageService {
 
-    @Value("#{'${image.supported-extensions}'.split(',')}")
+    @Value("#{'${media.image.supported-extensions}'.split(',')}")
     private Set<String> supportedImageExtensions;
 
     private final ImageRepository imageRepository;

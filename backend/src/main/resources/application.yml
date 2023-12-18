@@ -14,5 +14,8 @@ cors:
   allowed-headers: "*"
   exposed-headers: "*"
 
-image:
-  supported-extensions: "png,jpeg,jpg"
+media:
+  image:
+    supported-extensions: "png,jpeg,jpg"
+  audio:
+    supported-extensions: "mp3"
