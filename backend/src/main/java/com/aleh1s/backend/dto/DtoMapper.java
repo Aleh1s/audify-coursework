@@ -1,4 +1,4 @@
-package com.aleh1s.backend.util;
+package com.aleh1s.backend.dto;
 
 import com.aleh1s.backend.registration.RegistrationRequest;
 import com.aleh1s.backend.user.UserEntity;

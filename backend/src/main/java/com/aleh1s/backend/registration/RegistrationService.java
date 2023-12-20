@@ -4,7 +4,7 @@ import com.aleh1s.backend.exception.DuplicateResourceException;
 import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
-import com.aleh1s.backend.util.DtoMapper;
+import com.aleh1s.backend.dto.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

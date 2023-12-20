@@ -50,7 +50,7 @@ class ImageServiceTest {
         MultipartFile file = new MockMultipartFile(fileName, fileName, contentType, imageBytes);
         ArgumentCaptor<ImageEntity> argumentCaptor = ArgumentCaptor.forClass(ImageEntity.class);
         // when
-        underTest.uploadImage(file);
+        underTest.saveImage(file);
         // then
         verify(imageRepository, times(1)).save(argumentCaptor.capture());
         ImageEntity argumentCaptorValue = argumentCaptor.getValue();
@@ -65,7 +65,7 @@ class ImageServiceTest {
         ImageEntity expected = new ImageEntity("png", new byte[]{1, 2, 3, 4, 5});
         given(imageRepository.findById(id)).willReturn(Optional.of(expected));
         // when
-        ImageEntity actual = underTest.downloadImage(id);
+        ImageEntity actual = underTest.getImageById(id);
         // then
         assertThat(actual).isEqualTo(expected);
     }
