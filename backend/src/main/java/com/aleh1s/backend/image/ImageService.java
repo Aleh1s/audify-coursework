@@ -2,6 +2,7 @@ package com.aleh1s.backend.image;
 
 import com.aleh1s.backend.exception.InvalidResourceException;
 import com.aleh1s.backend.exception.ResourceNotFoundException;
+import com.aleh1s.backend.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,27 +27,16 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public String uploadImage(MultipartFile image) throws IOException {
+    public String saveImage(MultipartFile image) throws IOException {
         String contentType = image.getContentType();
-        if (isNull(contentType)) {
-            throw new InvalidResourceException("Content type is not present");
-        }
-
-        if (!isContentTypeSupported(contentType)) {
-            throw new InvalidResourceException("Content type is not supported");
+        if (isNull(contentType) || !contentType.startsWith("image")) {
+            throw new InvalidResourceException("Content type is not present or is not image");
         }
 
         String originalFilename = image.getOriginalFilename();
-        if (isNull(originalFilename)) {
-            throw new InvalidResourceException("File name is not present");
-        }
+        String fileExtension = FileUtils.getFileExtension(originalFilename)
+                .orElseThrow(() -> new InvalidResourceException("File name have no extension"));
 
-        int index = originalFilename.lastIndexOf(".");
-        if (index == -1) {
-            throw new InvalidResourceException("File name have no extension");
-        }
-
-        String fileExtension = originalFilename.substring(index + 1);
         if (!supportedImageExtensions.contains(fileExtension)) {
             throw new InvalidResourceException("File extension is not supported. It should be one of: %s".formatted(supportedImageExtensions));
         }
@@ -66,13 +56,8 @@ public class ImageService {
         return newImage.getId();
     }
 
-    public ImageEntity downloadImage(String id) {
+    public ImageEntity getImageById(String id) {
         return imageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Image with id %s does not exist".formatted(id)));
-    }
-
-    private boolean isContentTypeSupported(String contentType) {
-        return supportedImageExtensions.stream()
-                .anyMatch(supportedImageExtension -> contentType.equals("image/%s".formatted(supportedImageExtension)));
+                .orElseThrow(() -> new ResourceNotFoundException("Media with id %s does not exist".formatted(id)));
     }
 }

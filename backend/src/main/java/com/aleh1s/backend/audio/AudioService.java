@@ -3,6 +3,7 @@ package com.aleh1s.backend.audio;
 import com.aleh1s.backend.exception.InvalidResourceException;
 import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.util.ArrayUtils;
+import com.aleh1s.backend.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -30,16 +31,8 @@ public class AudioService {
     public String saveAudio(MultipartFile audio) throws IOException {
         String originalFilename = audio.getOriginalFilename();
 
-        if (isNull(originalFilename)) {
-            throw new InvalidResourceException("File name is null");
-        }
-
-        int index = originalFilename.indexOf('.');
-        if (index == -1) {
-            throw new InvalidResourceException("File name have no extension");
-        }
-        
-        String fileExtension = originalFilename.substring(index + 1);
+        String fileExtension = FileUtils.getFileExtension(originalFilename)
+                .orElseThrow(() -> new InvalidResourceException("File extension is not supported. It should be one of: %s".formatted(supportedAudioExtensions)));
         if (!supportedAudioExtensions.contains(fileExtension)) {
             throw new InvalidResourceException("File extension is not supported. It should be one of: %s".formatted(supportedAudioExtensions));
         }

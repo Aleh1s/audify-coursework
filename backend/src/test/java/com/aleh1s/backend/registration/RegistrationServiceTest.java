@@ -5,7 +5,7 @@ import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserRole;
 import com.aleh1s.backend.user.UserService;
-import com.aleh1s.backend.util.DtoMapper;
+import com.aleh1s.backend.dto.DtoMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
