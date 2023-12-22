@@ -5,8 +5,10 @@ spring:
     password: 123
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 10MB
+      max-file-size: 10MB
+      max-request-size: 20MB
+  jpa:
+    open-in-view: false
 
 cors:
   allowed-origins: "*"
@@ -19,3 +21,13 @@ media:
     supported-extensions: "png,jpeg,jpg"
   audio:
     supported-extensions: "mp3"
+
+elasticsearch:
+  url: localhost:9200
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+    tracer: TRACE

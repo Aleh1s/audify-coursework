@@ -25,18 +25,20 @@ public class AudioRange {
     }
 
     public static AudioRange parse(String range) {
-        Matcher matcher = RANGE_PATTERN.matcher(range);
+        if (range != null) {
+            Matcher matcher = RANGE_PATTERN.matcher(range);
 
-        if (matcher.find()) {
-            String startStr = matcher.group(1);
-            String endStr = matcher.group(2);
-            String lengthStr = matcher.group(3);
+            if (matcher.find()) {
+                String startStr = matcher.group(1);
+                String endStr = matcher.group(2);
+                String lengthStr = matcher.group(3);
 
-            return new AudioRange(
-                    nonNull(startStr) ? Long.parseLong(startStr) : 0,
-                    nonNull(endStr) ? Long.parseLong(endStr) : null,
-                    nonNull(lengthStr) ? Long.parseLong(lengthStr) : null
-            );
+                return new AudioRange(
+                        nonNull(startStr) ? Long.parseLong(startStr) : 0,
+                        nonNull(endStr) ? Long.parseLong(endStr) : null,
+                        nonNull(lengthStr) ? Long.parseLong(lengthStr) : null
+                );
+            }
         }
 
         return null;
