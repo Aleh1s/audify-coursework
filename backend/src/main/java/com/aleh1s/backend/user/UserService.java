@@ -1,5 +1,6 @@
 package com.aleh1s.backend.user;
 
+import com.aleh1s.backend.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,5 +18,10 @@ public class UserService {
 
     public boolean isUserEmailExist(String email) {
         return userRepository.findUserByEmail(email).isPresent();
+    }
+
+    public UserEntity getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id %d not found".formatted(userId)));
     }
 }

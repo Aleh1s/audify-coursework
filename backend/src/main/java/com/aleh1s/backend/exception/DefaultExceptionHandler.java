@@ -60,6 +60,18 @@ public class DefaultExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(apiError);
     }
 
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiError> handleException(DuplicateResourceException e,
+                                                    HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                CONFLICT.value(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(CONFLICT).body(apiError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e,
                                                     HttpServletRequest request) {

@@ -1,6 +1,7 @@
 package com.aleh1s.backend.user;
 
 
+import com.aleh1s.backend.playlist.PlaylistEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.GenerationType.*;
@@ -16,7 +19,7 @@ import static jakarta.persistence.GenerationType.*;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "playlists")
 @NoArgsConstructor
 @Table(name = "_user")
 @EqualsAndHashCode(of = "id")
@@ -42,6 +45,9 @@ public class UserEntity implements UserDetails {
     private AuthProvider authProvider;
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PlaylistEntity> playlists = new HashSet<>();
 
     public UserEntity(
             String firstName,
@@ -101,5 +107,15 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void addPlaylist(PlaylistEntity playlistEntity) {
+        this.playlists.add(playlistEntity);
+        playlistEntity.setOwner(this);
+    }
+
+    public void deletePlaylist(PlaylistEntity playlistEntity) {
+        this.playlists.remove(playlistEntity);
+        playlistEntity.setOwner(null);
     }
 }

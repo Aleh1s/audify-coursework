@@ -1,7 +1,11 @@
 package com.aleh1s.backend.song;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.aggregations.AggregationBuilders;
+import co.elastic.clients.elasticsearch._types.aggregations.SumAggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.SumAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.IdsQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -25,10 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType.CrossFields;
 import static java.util.Objects.isNull;
@@ -120,5 +122,40 @@ public class SongService {
                 .toList();
 
         return new PageImpl<>(songs, pageRequest, totalSongs);
+    }
+
+    public Set<SongEntity> getSongsByIds(List<String> songsIdsPart) {
+        Set<SongEntity> songs = new HashSet<>();
+        for (SongEntity song : songRepository.findAllById(songsIdsPart)) {
+            songs.add(song);
+        }
+        return songs;
+    }
+
+    public boolean isSongExistsById(String songId) {
+        return songRepository.existsById(songId);
+    }
+
+    public long getTotalDurationInSecondsByIds(Collection<String> songsIds) throws IOException {
+        IdsQuery idsQuery = QueryBuilders.ids()
+                .values(new ArrayList<>(songsIds))
+                .build();
+
+        SumAggregation aggregation = AggregationBuilders.sum()
+                .field("durationInSeconds")
+                .build();
+
+        SearchRequest searchRequest = SearchRequest.of(srb -> srb
+                .query(qb -> qb.ids(idsQuery))
+                .aggregations("total_duration", a -> a.sum(aggregation))
+                .size(0)
+        );
+
+        SearchResponse<SongEntity> response = elasticsearchClient.search(searchRequest, SongEntity.class);
+        SumAggregate totalDuration = response.aggregations()
+                .get("total_duration")
+                .sum();
+
+        return (long) totalDuration.value();
     }
 }

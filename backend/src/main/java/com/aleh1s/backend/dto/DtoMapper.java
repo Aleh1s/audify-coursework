@@ -1,5 +1,8 @@
 package com.aleh1s.backend.dto;
 
+import com.aleh1s.backend.playlist.CreatePlaylistRequest;
+import com.aleh1s.backend.playlist.PlaylistEntity;
+import com.aleh1s.backend.playlist.PlaylistFullView;
 import com.aleh1s.backend.registration.RegistrationRequest;
 import com.aleh1s.backend.song.*;
 import com.aleh1s.backend.user.UserEntity;
@@ -57,6 +60,18 @@ public class DtoMapper {
                 songEntity.getPreviewId(),
                 songEntity.getAudioId(),
                 songEntity.getDurationInSeconds()
+        );
+    }
+
+    public PlaylistEntity toPlaylist(CreatePlaylistRequest createPlaylistRequest) {
+        return new PlaylistEntity(createPlaylistRequest.name());
+    }
+
+    public PlaylistFullView toPlaylistFullView(PlaylistEntity playlist) {
+        return new PlaylistFullView(
+                playlist.getId(),
+                playlist.getName(),
+                playlist.getPreviewId()
         );
     }
 }
