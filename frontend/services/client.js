@@ -1,8 +1,8 @@
 import axios from "axios";
 import {API_BASE_URL} from "../constants/client.js";
 
-export const getSongs = async (query, page, limit) => {
-    return await axios.post(`${API_BASE_URL}/songs/search`, {query, page, limit})
+export const getSongs = async (query, page, limit, categoryId) => {
+    return await axios.post(`${API_BASE_URL}/songs/search`, {query, page, limit, categoryId})
 }
 
 export const getCategories = async () => {

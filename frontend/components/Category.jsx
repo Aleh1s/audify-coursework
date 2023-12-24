@@ -2,50 +2,75 @@ import {VStack} from "@chakra-ui/react";
 import {css} from "../style/scroll.js";
 import SongItem from "./SongItem.jsx";
 import DelimiterWithText from "./DelimiterWithText.jsx";
-
-const songs = [
-    {
-        name: 'Song 1',
-        singer: 'Singer 1',
-        category: 'Category 1',
-        duration: '3:06',
-        imageUrl: 'https://picsum.photos/300'
-    },
-    {
-        name: 'Song 2',
-        singer: 'Singer 2',
-        category: 'Category 2',
-        duration: '2:32',
-        imageUrl: 'https://picsum.photos/400'
-    },
-    {
-        name: 'Song 3',
-        singer: 'Singer 3',
-        category: 'Category 3',
-        duration: '4:12',
-        imageUrl: 'https://picsum.photos/500'
-    },
-    {
-        name: 'Song 4',
-        singer: 'Singer 4',
-        category: 'Category 4',
-        duration: '3:06',
-        imageUrl: 'https://picsum.photos/600'
-    },
-    {
-        name: 'Song 5',
-        singer: 'Singer 5',
-        category: 'Category 5',
-        duration: '3:06',
-        imageUrl: 'https://picsum.photos/700'
-    }
-]
+import {useEffect, useState} from "react";
+import {getCategories, getSongs} from "../services/client.js";
+import {useParams} from "react-router-dom";
+import SearchInput from "./shared/SearchInput.jsx";
+import {errorNotification} from "../services/notification.js";
 
 const Category = () => {
+
+    const params = useParams()
+    const limit = 10
+    const [songs, setSongs] = useState([])
+    const [query, setQuery] = useState('')
+    const [page, setPage] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
+    const [totalCount, setTotalCount] = useState(0)
+    const [category, setCategory] = useState({})
+
+    const fetchCategory = () => {
+        getCategories().then(res => {
+            setCategory(res.data.filter(category => category.id === parseInt(params.categoryId))[0])
+        }).catch(err => {
+            console.log(err)
+            errorNotification(
+                err.code,
+                err.response.data.message
+            )
+        })
+    }
+
+    const fetchSongs = () => {
+        if (isLoading && params.categoryId) {
+            getSongs(query, page, limit, params.categoryId).then(res => {
+                setSongs([...songs, ...res.data.content])
+                setPage(page + 1)
+                setTotalCount(res.data.totalPages)
+            }).catch(err => {
+                console.log(err)
+            }).finally(() => {
+                setIsLoading(false)
+            })
+        }
+    }
+
+    useEffect(() => {
+        fetchCategory()
+    }, []);
+
+    useEffect(() => {
+        fetchSongs()
+    }, [isLoading]);
+
+    const handleScroll = ({target}) => {
+        if (target.scrollHeight - (target.scrollTop + target.clientHeight) <= 100
+            && songs.length < totalCount) {
+            setIsLoading(true)
+        }
+    }
+
+    const onSearch = () => {
+        setSongs([])
+        setPage(0)
+        setIsLoading(true)
+    }
+
     return (
         <>
+            <SearchInput setQuery={setQuery} onSearch={onSearch}/>
             <DelimiterWithText
-                text={'Category Name'}
+                text={category?.name}
                 textBg={'gray.700'}
             />
             <VStack
@@ -54,6 +79,7 @@ const Category = () => {
                 maxH={'calc(100vh - 290px)'}
                 paddingRight={'10px'}
                 css={css}
+                onScroll={handleScroll}
             >
                 {songs.map((song, index) => <SongItem key={index} song={song}/>)}
             </VStack>

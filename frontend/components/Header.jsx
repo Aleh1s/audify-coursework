@@ -1,6 +1,10 @@
 import {Avatar, GridItem, Heading, HStack} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
 
 const Header = () => {
+
+    const navigate = useNavigate()
+
     return (
         <GridItem borderRadius={'5px'} px={'20px'} bg={'gray.700'} colSpan={2}>
             <HStack
@@ -13,6 +17,8 @@ const Header = () => {
                     bgClip='text'
                     fontSize='4xl'
                     fontWeight='extrabold'
+                    cursor={'pointer'}
+                    onClick={() => navigate('/')}
                 >
                     Audify
                 </Heading>

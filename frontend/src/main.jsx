@@ -31,7 +31,7 @@ const router = createBrowserRouter([
                 element: <SongView/>,
             },
             {
-                path: '/category',
+                path: '/category/:categoryId',
                 element: <Category/>,
             },
             {
