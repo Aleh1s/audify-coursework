@@ -5,7 +5,7 @@ import {ChakraProvider, createStandaloneToast} from "@chakra-ui/react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Main from "../pages/Main.jsx";
 import CategoryList from "../components/CategoryList.jsx";
-import Song from "../components/SongView.jsx";
+import SongView from "../components/SongView.jsx";
 import GlobalPlaylist from "../components/GlobalPlaylist.jsx";
 import Category from "../components/Category.jsx";
 import PlaylistView from "../components/PlaylistView.jsx";
@@ -27,8 +27,8 @@ const router = createBrowserRouter([
                 element: <CategoryList/>,
             },
             {
-                path: '/song',
-                element: <Song/>,
+                path: '/song/:songId',
+                element: <SongView/>,
             },
             {
                 path: '/category',

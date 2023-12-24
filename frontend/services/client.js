@@ -16,3 +16,7 @@ export const saveSong = async (song, preview, audio) => {
     formData.append('song', new Blob([JSON.stringify(song)], {type: 'application/json'}));
     return await axios.post(`${API_BASE_URL}/songs`, formData)
 }
+
+export const getSongById = async (id) => {
+    return await axios.get(`${API_BASE_URL}/songs/${id}`)
+}

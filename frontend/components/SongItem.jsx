@@ -1,6 +1,9 @@
 import {Grid, GridItem, Heading, Img, Text} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
 
 const SongItem = ({song}) => {
+
+    const navigate = useNavigate()
 
     const getDurationFromSeconds = (durationInSeconds) => {
         return `${Math.floor(durationInSeconds / 60)}:${durationInSeconds % 60}`
@@ -18,6 +21,7 @@ const SongItem = ({song}) => {
             transition={'background-color 0.2s ease-in-out'}
             p={'10px'}
             cursor={'pointer'}
+            onClick={() => navigate(`/song/${song.id}`)}
         >
             <GridItem>
                 <Img src={`http://localhost:8080/api/v1/images/${song.previewId}`} borderRadius={'5px'}/>
