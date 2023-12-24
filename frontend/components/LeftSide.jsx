@@ -48,7 +48,7 @@ const adminSections = [
 
 const LeftSide = () => {
 
-    const isAdmin = false
+    const isAdmin = true
 
     return (
         <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
