@@ -16,7 +16,6 @@ import {
     ModalHeader,
     VStack
 } from "@chakra-ui/react";
-import CreatePlaylistPopup from "./CreatePlaylistPopup.jsx";
 import AddContentButton from "./shared/AddContentButton.jsx";
 import '../src/App.css'
 import AddSongModalContent from "./AddSongModalContent.jsx";
@@ -49,7 +48,7 @@ const adminSections = [
 
 const LeftSide = () => {
 
-    const isAdmin = true
+    const isAdmin = false
 
     return (
         <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
@@ -73,10 +72,6 @@ const LeftSide = () => {
                     )
                     : (
                         <>
-                            <CreatePlaylistPopup
-                                isOpen={isOpen}
-                                onClose={onClose}
-                            />
                             <SectionList
                                 mb={'20px'}
                                 sections={userSections}

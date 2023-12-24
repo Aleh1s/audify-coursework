@@ -76,7 +76,7 @@ public class SongService {
 
     public Page<SongEntity> findSongsByQuery(SongsSearchRequest request) throws IOException {
         List<String> fields = List.of("name", "artist", "text", "tags");
-        PageRequest pageRequest = PaginationUtils.getPageRequest(request.offset(), request.limit());
+        PageRequest pageRequest = PaginationUtils.getPageRequest(request.page(), request.limit());
         int from = pageRequest.getPageNumber() * pageRequest.getPageSize(), size = pageRequest.getPageSize();
 
         BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();

@@ -1,6 +1,11 @@
 import {Grid, GridItem, Heading, Img, Text} from "@chakra-ui/react";
 
 const SongItem = ({song}) => {
+
+    const getDurationFromSeconds = (durationInSeconds) => {
+        return `${Math.floor(durationInSeconds / 60)}:${durationInSeconds % 60}`
+    }
+
     return (
         <Grid
             templateRows={'65px'}
@@ -15,18 +20,18 @@ const SongItem = ({song}) => {
             cursor={'pointer'}
         >
             <GridItem>
-                <Img src={song.imageUrl} borderRadius={'5px'}/>
+                <Img src={`http://localhost:8080/api/v1/images/${song.previewId}`} borderRadius={'5px'}/>
             </GridItem>
             <GridItem>
                 <Heading size={'md'} >{song.name}</Heading>
-                <Text color={'gray.400'} textAlign={'start'}>Singer</Text>
+                <Text color={'gray.400'} textAlign={'start'}>{song.artist}</Text>
             </GridItem>
 
             <GridItem>
-                <Text textAlign={'center'}>{song.singer}</Text>
+                <Text textAlign={'center'}>{song.category.name}</Text>
             </GridItem>
             <GridItem>
-                <Text textAlign={'end'}>{song.duration}</Text>
+                <Text textAlign={'end'}>{getDurationFromSeconds(song.durationInSeconds)}</Text>
             </GridItem>
         </Grid>
     )

@@ -51,12 +51,12 @@ public class SongController {
     @GetMapping("/categories/{category-id}")
     public ResponseEntity<?> getSongsByCategory(
             @PathVariable("category-id") int categoryId,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "limit", required = false, defaultValue = "10") int limit
     ) {
         Page<SongMinView> songs = songService.getSongsByCategory(
                 MusicCategory.getCategoryById(categoryId),
-                PaginationUtils.getPageRequest(offset, limit)
+                PaginationUtils.getPageRequest(page, limit)
         ).map(dtoMapper::toSongMinView);
         return ResponseEntity.ok(songs);
     }
