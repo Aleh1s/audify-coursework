@@ -6,8 +6,7 @@ import com.aleh1s.backend.song.SongService;
 import com.aleh1s.backend.util.PaginationUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,16 @@ import java.util.List;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
-    private final SongService songService;
     private final DtoMapper dtoMapper;
+    private final SongService songService;
+
+    @GetMapping
+    public ResponseEntity<?> getPlaylists() {
+        List<PlaylistMinView> playlists = playlistService.getPlaylists().stream()
+                .map(dtoMapper::toPlaylistMinView)
+                .toList();
+        return ResponseEntity.ok(playlists);
+    }
 
     @PostMapping
     public ResponseEntity<?> createPlaylist(
@@ -52,8 +59,8 @@ public class PlaylistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPlaylistById(@PathVariable("id") Long id) {
-        PlaylistEntity playlist = playlistService.getPlaylistById(id);
+    public ResponseEntity<?> getPlaylistById(@PathVariable("id") Long id) throws IOException {
+        PlaylistEntity playlist = playlistService.getPlaylistByIdFetchTotalDurationInSeconds(id);
         return ResponseEntity.ok(dtoMapper.toPlaylistFullView(playlist));
     }
 
@@ -61,18 +68,12 @@ public class PlaylistController {
     public ResponseEntity<?> getSongsByPlaylistId(
             @PathVariable("id") Long id,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
-            @RequestParam(value = "offset", defaultValue = "0") int offset
+            @RequestParam(value = "page", defaultValue = "0") int page
     ) throws IOException {
-        PageRequest pageRequest = PaginationUtils.getPageRequest(offset, limit);
-        PlaylistEntity playlist = playlistService.getPlaylistByIdFetchSongs(id, pageRequest);
-        List<SongMinView> songs = playlist.getSongEntities().stream()
-                .map(dtoMapper::toSongMinView)
-                .toList();
-        return ResponseEntity.ok(new PlaylistSongsResponse(
-                new PageImpl<>(songs, pageRequest, playlist.getSongs().size()),
-                playlist.getTotalDurationInSeconds(),
-                playlist.getTotalSongs()
-        ));
+        Page<SongMinView> songs = songService.getSongsByPlaylistId(
+                id, PaginationUtils.getPageRequest(page, limit)
+        ).map(dtoMapper::toSongMinView);
+        return ResponseEntity.ok(songs);
     }
 
     @PostMapping("/{playlist-id}/songs/{song-id}")

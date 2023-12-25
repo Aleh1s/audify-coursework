@@ -1,10 +1,9 @@
 package com.aleh1s.backend.playlist;
 
-public record PlaylistFullView(
+public record PlaylistMinView(
         Long id,
         String name,
         int totalSongs,
-        long totalDurationInSeconds,
         String previewId
 ) {
 }

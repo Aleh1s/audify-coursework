@@ -15,6 +15,8 @@ import com.aleh1s.backend.audio.AudioService;
 import com.aleh1s.backend.exception.InvalidResourceException;
 import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.image.ImageService;
+import com.aleh1s.backend.playlist.PlaylistEntity;
+import com.aleh1s.backend.playlist.PlaylistService;
 import com.aleh1s.backend.util.AudioUtils;
 import com.aleh1s.backend.util.PaginationUtils;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -22,6 +24,8 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +51,8 @@ public class SongService {
     private final ImageService imageService;
     private final AudioService audioService;
     private final ElasticsearchClient elasticsearchClient;
+
+    private PlaylistService playlistService;
 
     @Transactional
     public void saveSong(SongEntity song, MultipartFile preview, MultipartFile audio)
@@ -124,12 +130,31 @@ public class SongService {
         return new PageImpl<>(songs, pageRequest, totalSongs);
     }
 
-    public Set<SongEntity> getSongsByIds(List<String> songsIdsPart) {
-        Set<SongEntity> songs = new HashSet<>();
-        for (SongEntity song : songRepository.findAllById(songsIdsPart)) {
-            songs.add(song);
+    public Page<SongEntity> getSongsByIds(Collection<String> songsIds, PageRequest pageRequest) throws IOException {
+        IdsQuery idsQuery = QueryBuilders.ids()
+                .values(new ArrayList<>(songsIds))
+                .build();
+
+        SearchRequest searchRequest = SearchRequest.of(srb -> srb
+                .query(qb -> qb.ids(idsQuery))
+                .from(pageRequest.getPageNumber() * pageRequest.getPageSize())
+                .size(pageRequest.getPageSize())
+        );
+
+        SearchResponse<SongEntity> response = elasticsearchClient.search(searchRequest, SongEntity.class);
+
+        HitsMetadata<SongEntity> hits = response.hits();
+        if (isNull(hits.total())) {
+            log.error("Total hits is null");
+            return Page.empty();
         }
-        return songs;
+
+        long totalSongs = hits.total().value();
+        List<SongEntity> songs = hits.hits().stream()
+                .map(Hit::source)
+                .toList();
+
+        return new PageImpl<>(songs, pageRequest, totalSongs);
     }
 
     public boolean isSongExistsById(String songId) {
@@ -157,5 +182,21 @@ public class SongService {
                 .sum();
 
         return (long) totalDuration.value();
+    }
+
+    public Page<SongEntity> getSongsByPlaylistId(Long playlistId, PageRequest pageRequest) throws IOException {
+        PlaylistEntity playlist = playlistService.getPlaylistById(playlistId);
+
+        List<String> songsIds = playlist.getSongs().stream()
+                .skip(pageRequest.getOffset() * pageRequest.getPageSize())
+                .limit(pageRequest.getPageSize())
+                .toList();
+
+        return getSongsByIds(songsIds, pageRequest);
+    }
+
+    @Autowired
+    public void setPlaylistService(@Lazy PlaylistService playlistService) {
+        this.playlistService = playlistService;
     }
 }

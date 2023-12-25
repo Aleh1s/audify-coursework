@@ -40,24 +40,32 @@ public class PlaylistEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
 
+    @Column(name = "total_songs", nullable = false)
+    private int totalSongs;
+
     @Transient
     private Set<SongEntity> songEntities;
 
     @Transient
     private long totalDurationInSeconds;
 
-    @Transient
-    private int totalSongs;
-
     public PlaylistEntity(String name) {
         this.name = name;
     }
 
     public boolean addSong(String songId) {
-        return songs.add(songId);
+        boolean isAdded = songs.add(songId);
+        if (isAdded) {
+            totalSongs++;
+        }
+        return isAdded;
     }
 
     public boolean deleteSong(String songId) {
-        return songs.remove(songId);
+        boolean isRemoved = songs.remove(songId);
+        if (isRemoved) {
+            totalSongs--;
+        }
+        return isRemoved;
     }
 }

@@ -1,6 +1,7 @@
 package com.aleh1s.backend.dto;
 
 import com.aleh1s.backend.playlist.CreatePlaylistRequest;
+import com.aleh1s.backend.playlist.PlaylistMinView;
 import com.aleh1s.backend.playlist.PlaylistEntity;
 import com.aleh1s.backend.playlist.PlaylistFullView;
 import com.aleh1s.backend.registration.RegistrationRequest;
@@ -71,6 +72,17 @@ public class DtoMapper {
         return new PlaylistFullView(
                 playlist.getId(),
                 playlist.getName(),
+                playlist.getTotalSongs(),
+                playlist.getTotalDurationInSeconds(),
+                playlist.getPreviewId()
+        );
+    }
+
+    public PlaylistMinView toPlaylistMinView(PlaylistEntity playlist) {
+        return new PlaylistMinView(
+                playlist.getId(),
+                playlist.getName(),
+                playlist.getTotalSongs(),
                 playlist.getPreviewId()
         );
     }

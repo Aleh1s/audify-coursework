@@ -8,6 +8,7 @@ import com.aleh1s.backend.song.SongService;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,27 +42,22 @@ public class PlaylistService {
         playlistRepository.save(playlist);
     }
 
+    public Set<PlaylistEntity> getPlaylists() {
+        // dummy user
+        UserEntity user = userService.getUserById(1L);
+        Hibernate.initialize(user.getPlaylists());
+        return user.getPlaylists();
+    }
+
     public PlaylistEntity getPlaylistById(Long id) {
         return playlistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Playlist with id %d not found".formatted(id)));
     }
 
-    public PlaylistEntity getPlaylistByIdFetchSongs(Long id, PageRequest pageRequest) throws IOException {
+    public PlaylistEntity getPlaylistByIdFetchTotalDurationInSeconds(Long id) throws IOException {
         PlaylistEntity playlist = getPlaylistById(id);
-
-        List<String> songsIds = playlist.getSongs().stream()
-                .skip(pageRequest.getOffset() * pageRequest.getPageSize())
-                .limit(pageRequest.getPageSize())
-                .toList();
-
-        Set<SongEntity> songs = songService.getSongsByIds(songsIds);
-        long totalDurationInSeconds = songService.getTotalDurationInSecondsByIds(songsIds);
-        int totalSongs = playlist.getSongs().size();
-
-        playlist.setSongEntities(songs);
+        long totalDurationInSeconds = songService.getTotalDurationInSecondsByIds(playlist.getSongs());
         playlist.setTotalDurationInSeconds(totalDurationInSeconds);
-        playlist.setTotalSongs(totalSongs);
-
         return playlist;
     }
 

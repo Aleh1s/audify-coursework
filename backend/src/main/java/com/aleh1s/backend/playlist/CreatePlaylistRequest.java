@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 
 public record CreatePlaylistRequest(
         @NotNull(message = "name cannot be null")
-        @Length(min = 2, max = 255, message = "name must be between 2 and 255 characters")
+        @Length(min = 2, max = 50, message = "name must be between 2 and 50 characters")
         String name
 ) {
 }

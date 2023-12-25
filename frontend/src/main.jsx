@@ -8,7 +8,7 @@ import CategoryList from "../components/CategoryList.jsx";
 import SongView from "../components/SongView.jsx";
 import GlobalPlaylist from "../components/GlobalPlaylist.jsx";
 import Category from "../components/Category.jsx";
-import PlaylistView from "../components/PlaylistView.jsx";
+import PlaylistView from "../components/playlist/PlaylistView.jsx";
 import AdminContent from "../components/AdminContent.jsx";
 import AdminUsers from "../components/AdminUsers.jsx";
 
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
                 element: <Category/>,
             },
             {
-                path: '/playlist',
+                path: '/playlist/:playlistId',
                 element: <PlaylistView/>,
             },
             {
