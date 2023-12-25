@@ -90,7 +90,7 @@ const AddSongToPlaylistModal = ({song, isOpen, onClose}) => {
                             color={'white'}
                         >
                             <GridItem>
-                                <Img src={`${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'}/>
+                                <Img src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'}/>
                             </GridItem>
 
                             <GridItem

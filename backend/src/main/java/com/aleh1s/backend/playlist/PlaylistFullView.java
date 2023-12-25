@@ -5,6 +5,7 @@ public record PlaylistFullView(
         String name,
         int totalSongs,
         long totalDurationInSeconds,
+        boolean isLikedSongsPlaylist,
         String previewId
 ) {
 }

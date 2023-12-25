@@ -1,11 +1,16 @@
 import PlaylistList from "./playlist/PlaylistList.jsx";
 import DelimiterWithText from "./DelimiterWithText.jsx";
 import SectionList from "./SectionList.jsx";
-import {GridItem} from "@chakra-ui/react";
+import {Button, GridItem, Heading, useDisclosure} from "@chakra-ui/react";
 import AddContentButton from "./shared/AddContentButton.jsx";
 import '../src/App.css'
 import AddSongModalContent from "./AddSongModalContent.jsx";
-import CreatePlaylistModalContent from "./CreatePlaylistModalContent.jsx";
+import CreatePlaylistModal from "./playlist/CreatePlaylistModal.jsx";
+import {AddIcon} from "@chakra-ui/icons";
+import {getPlaylists} from "../services/client.js";
+import {setPlaylists} from "../store/userSlice.js";
+import {errorNotification} from "../services/notification.js";
+import {useDispatch} from "react-redux";
 
 const userSections = [
     {
@@ -33,9 +38,60 @@ const adminSections = [
     }
 ]
 
+const AddButton = ({onOpen, title}) => {
+    return (
+        <Button
+            display={'grid'}
+            p={'10px'}
+            w={'100%'}
+            h={'64px'}
+            gridTemplateRows={'1fr'}
+            gridTemplateColumns={'44px 1fr'}
+            gap={'0 20px'}
+            bg={'none'}
+            borderRadius={'5px'}
+            _hover={{bg: '#4A5568'}}
+            transition={'background-color 0.2s ease-in-out'}
+            color={'white'}
+            mb={'10px'}
+            onClick={onOpen}
+        >
+            <GridItem>
+                <AddIcon/>
+            </GridItem>
+
+            <GridItem>
+                <Heading mb={'3px'} size={'md'} textAlign={'start'}>
+                    {title}
+                </Heading>
+            </GridItem>
+        </Button>
+    )
+}
+
 const LeftSide = () => {
 
     const isAdmin = false
+
+    const {isOpen, onOpen, onClose} = useDisclosure()
+    const dispatch = useDispatch()
+
+    const fetchPlaylists = () => {
+        getPlaylists().then(res => {
+            dispatch(setPlaylists(res.data))
+        }).catch(err => {
+            console.log(err)
+            errorNotification(
+                err.code,
+                err.response.data.message
+            )
+        })
+    }
+
+    const onCreateSuccess = () => {
+        fetchPlaylists()
+        onClose()
+    }
 
     return (
         <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
@@ -68,9 +124,15 @@ const LeftSide = () => {
                                 text={'Playlists'}
                                 textBg={'gray.700'}
                             />
-                            <AddContentButton title={'Create Playlist'}>
-                                <CreatePlaylistModalContent/>
-                            </AddContentButton>
+                            <AddButton
+                                title={'Create Playlist'}
+                                onOpen={onOpen}
+                            />
+                            <CreatePlaylistModal
+                                onSuccess={onCreateSuccess}
+                                onClose={onClose}
+                                isOpen={isOpen}
+                            />
                             <PlaylistList/>
                         </>
                     )

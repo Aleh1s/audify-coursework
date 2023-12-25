@@ -5,6 +5,7 @@ public record PlaylistRelatedSongView(
         String name,
         String previewId,
         int totalSongs,
+        boolean isLikedSongsPlaylist,
         boolean containsRelatedSong
 ) {
 }

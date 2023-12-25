@@ -1,14 +1,17 @@
 package com.aleh1s.backend.registration;
 
+import com.aleh1s.backend.dto.DtoMapper;
 import com.aleh1s.backend.exception.DuplicateResourceException;
+import com.aleh1s.backend.playlist.PlaylistEntity;
 import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
-import com.aleh1s.backend.dto.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +23,15 @@ public class RegistrationService {
     private final DtoMapper dtoMapper;
 
     @Transactional
-    public void registerUser(RegistrationRequest request) {
+    public void registerUser(RegistrationRequest request) throws IOException {
         requireUniqueEmail(request.email());
         UserEntity newUserEntity = dtoMapper.toUser(request);
         newUserEntity.setPassword(passwordEncoder.encode(request.password()));
         newUserEntity.setAuthProvider(AuthProvider.INTERNAL);
+
+        PlaylistEntity likedSongsPlaylist = new PlaylistEntity("Liked songs", true);
+        newUserEntity.addPlaylist(likedSongsPlaylist);
+
         userService.saveUserEntity(newUserEntity);
     }
 

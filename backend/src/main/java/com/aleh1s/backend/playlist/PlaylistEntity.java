@@ -24,7 +24,7 @@ public class PlaylistEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "preview_id", nullable = false)
+    @Column(name = "preview_id")
     private String previewId;
 
     @Setter(AccessLevel.PRIVATE)
@@ -43,6 +43,9 @@ public class PlaylistEntity {
     @Column(name = "total_songs", nullable = false)
     private int totalSongs;
 
+    @Column(name = "is_liked_songs_playlist", nullable = false)
+    private boolean isLikedSongsPlaylist;
+
     @Transient
     private Set<SongEntity> songEntities;
 
@@ -54,6 +57,11 @@ public class PlaylistEntity {
 
     public PlaylistEntity(String name) {
         this.name = name;
+    }
+
+    public PlaylistEntity(String name, boolean isLikedSongsPlaylist) {
+        this.name = name;
+        this.isLikedSongsPlaylist = isLikedSongsPlaylist;
     }
 
     public boolean addSong(String songId) {

@@ -18,12 +18,14 @@ import {css} from "../../style/scroll.js";
 import DelimiterWithText from "../DelimiterWithText.jsx";
 import SongItem from "../SongItem.jsx";
 import {useEffect, useState} from "react";
-import {deletePlaylistById, getPlaylistById, getSongsByPlaylistId} from "../../services/client.js";
+import {getPlaylistById, getPlaylists, getSongsByPlaylistId} from "../../services/client.js";
 import {useNavigate, useParams} from "react-router-dom";
-import {errorNotification, successNotification} from "../../services/notification.js";
+import {errorNotification} from "../../services/notification.js";
 import {API_BASE_URL} from "../../constants/client.js";
 import EditPlaylistModal from "./EditPlaylistModal.jsx";
 import DeletePlaylistModal from "./DeletePlaylistModal.jsx";
+import {setPlaylists} from "../../store/userSlice.js";
+import {useDispatch} from "react-redux";
 
 const PlaylistView = () => {
 
@@ -31,12 +33,13 @@ const PlaylistView = () => {
     const params = useParams()
     const [playlist, setPlaylist] = useState({})
     const [songs, setSongs] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [page, setPage] = useState(0)
     const [totalCount, setTotalCount] = useState(0)
     const {isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose} = useDisclosure()
     const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose} = useDisclosure()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const fetchSongs = () => {
         if (isLoading && params.playlistId) {
@@ -55,7 +58,6 @@ const PlaylistView = () => {
     const fetchPlaylist = () => {
         if (params.playlistId) {
             getPlaylistById(params.playlistId).then(res => {
-                console.log(res.data)
                 setPlaylist(res.data)
             }).catch(err => {
                 console.log(err)
@@ -68,8 +70,12 @@ const PlaylistView = () => {
     }
 
     useEffect(() => {
+        setSongs([])
+        setPage(0)
+        setTotalCount(0)
+        setIsLoading(true)
         fetchPlaylist()
-    }, [])
+    }, [params.playlistId])
 
     useEffect(() => {
         fetchSongs()
@@ -91,11 +97,25 @@ const PlaylistView = () => {
     }
 
     const onDeleteSuccess = () => {
+        fetchPlaylists()
         navigate('/')
+    }
+
+    const fetchPlaylists = () => {
+        getPlaylists().then(res => {
+            dispatch(setPlaylists(res.data))
+        }).catch(err => {
+            console.log(err)
+            errorNotification(
+                err.code,
+                err.response.data.message
+            )
+        })
     }
 
     const onEditSuccess = () => {
         fetchPlaylist()
+        fetchPlaylists()
         onEditClose()
     }
 
@@ -128,7 +148,9 @@ const PlaylistView = () => {
                     gap={'0 30px'}
                 >
                     <GridItem>
-                        <Img src={`${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'} h={'250px'}/>
+                        <Img
+                            src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`}
+                            borderRadius={'5px'} h={'250px'}/>
                     </GridItem>
                     <GridItem>
                         <VStack
@@ -140,23 +162,27 @@ const PlaylistView = () => {
                                 w={'100%'}
                             >
                                 <Heading size={'xl'}>{playlist.name}</Heading>
-                                <Menu>
-                                    {({isOpen}) => (
-                                        <>
-                                            <MenuButton isActive={isOpen}>
-                                                <Img
-                                                    src={'/player/three-dots-btn.png'}
-                                                    w={'25px'}
-                                                    _hover={{cursor: 'pointer'}}
-                                                />
-                                            </MenuButton>
-                                            <MenuList color={'black'}>
-                                                <MenuItem onClick={onEditOpen}>Edit</MenuItem>
-                                                <MenuItem onClick={onDeleteOpen}>Delete</MenuItem>
-                                            </MenuList>
-                                        </>
-                                    )}
-                                </Menu>
+                                {
+                                    !playlist.isLikedSongsPlaylist
+                                        ? <Menu>
+                                            {({isOpen}) => (
+                                                <>
+                                                    <MenuButton isActive={isOpen}>
+                                                        <Img
+                                                            src={'/player/three-dots-btn.png'}
+                                                            w={'25px'}
+                                                            _hover={{cursor: 'pointer'}}
+                                                        />
+                                                    </MenuButton>
+                                                    <MenuList color={'black'}>
+                                                        <MenuItem onClick={onEditOpen}>Edit</MenuItem>
+                                                        <MenuItem onClick={onDeleteOpen}>Delete</MenuItem>
+                                                    </MenuList>
+                                                </>
+                                            )}
+                                        </Menu>
+                                        : null
+                                }
 
                             </HStack>
                             <Text color={'gray.400'}>{playlist.totalSongs} songs

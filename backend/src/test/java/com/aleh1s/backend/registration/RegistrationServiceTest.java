@@ -1,11 +1,11 @@
 package com.aleh1s.backend.registration;
 
 import com.aleh1s.backend.TestHelper;
+import com.aleh1s.backend.dto.DtoMapper;
 import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserRole;
 import com.aleh1s.backend.user.UserService;
-import com.aleh1s.backend.dto.DtoMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +15,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ class RegistrationServiceTest {
     private DtoMapper dtoMapper;
 
     @Test
-    void registerUser() {
+    void registerUser() throws IOException {
         // given
         RegistrationRequest request = TestHelper.newRegistrationRequest();
         given(userService.isUserEmailExist(request.email())).willReturn(false);

@@ -5,6 +5,8 @@ import {getPlaylists} from "../../services/client.js";
 import {errorNotification} from "../../services/notification.js";
 import {API_BASE_URL} from "../../constants/client.js";
 import {useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {setLikedSongsPlaylistId, setPlaylists} from "../../store/userSlice.js";
 
 const Playlist = ({playlist}) => {
 
@@ -27,7 +29,7 @@ const Playlist = ({playlist}) => {
             onClick={() => navigate(`/playlist/${playlist.id}`)}
         >
             <GridItem>
-                <Img src={`${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'}/>
+                <Img src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'}/>
             </GridItem>
 
             <GridItem
@@ -48,14 +50,14 @@ const Playlist = ({playlist}) => {
 
 const PlaylistList = () => {
 
-    const [playlists, setPlaylists] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const playlists = useSelector(state => state.user.playlists)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         setIsLoading(true)
         getPlaylists().then(res => {
-            console.log(res.data)
-            setPlaylists(res.data)
+            dispatch(setPlaylists(res.data))
         }).catch(err => {
             console.log(err)
             errorNotification(
@@ -66,6 +68,11 @@ const PlaylistList = () => {
             setIsLoading(false)
         })
     }, [])
+
+    useEffect(() => {
+        playlists.filter(playlist => playlist.isLikedSongsPlaylist)
+            .forEach(playlist => dispatch(setLikedSongsPlaylistId(playlist.id)))
+    }, [playlists]);
 
     return (
         <>

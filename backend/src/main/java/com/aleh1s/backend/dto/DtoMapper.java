@@ -71,6 +71,7 @@ public class DtoMapper {
                 playlist.getName(),
                 playlist.getTotalSongs(),
                 playlist.getTotalDurationInSeconds(),
+                playlist.isLikedSongsPlaylist(),
                 playlist.getPreviewId()
         );
     }
@@ -80,6 +81,7 @@ public class DtoMapper {
                 playlist.getId(),
                 playlist.getName(),
                 playlist.getTotalSongs(),
+                playlist.isLikedSongsPlaylist(),
                 playlist.getPreviewId()
         );
     }
@@ -90,6 +92,7 @@ public class DtoMapper {
                 playlist.getName(),
                 playlist.getPreviewId(),
                 playlist.getTotalSongs(),
+                playlist.isLikedSongsPlaylist(),
                 playlist.isContainRelatedSong()
         );
     }

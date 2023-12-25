@@ -1,6 +1,7 @@
 package com.aleh1s.backend.playlist;
 
 import com.aleh1s.backend.exception.DuplicateResourceException;
+import com.aleh1s.backend.exception.ForbiddenException;
 import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.image.ImageService;
 import com.aleh1s.backend.song.SongService;
@@ -13,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import static java.util.Objects.*;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +40,7 @@ public class PlaylistService {
         user.addPlaylist(playlist);
         playlistRepository.save(playlist);
     }
+
 
     public Set<PlaylistEntity> getPlaylists(String relatedSongId) {
         // dummy user
@@ -86,7 +86,7 @@ public class PlaylistService {
         }
         boolean isSongAdded = playlist.addSong(songId);
         if (!isSongAdded) {
-            throw new DuplicateResourceException("Song with id %s already exists in playlist".formatted(songId));
+            throw new DuplicateResourceException("Song already exists in playlist");
         }
     }
 
@@ -95,7 +95,7 @@ public class PlaylistService {
         PlaylistEntity playlist = getPlaylistById(playlistId);
         boolean isSongDeleted = playlist.deleteSong(songId);
         if (!isSongDeleted) {
-            throw new ResourceNotFoundException("Song with id %s not found in playlist".formatted(songId));
+            throw new ResourceNotFoundException("Song not found in playlist");
         }
     }
 
@@ -107,12 +107,21 @@ public class PlaylistService {
                 .filter(p -> p.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Playlist with id %d not found".formatted(id)));
+
+        if (playlist.isLikedSongsPlaylist()) {
+            throw new ForbiddenException("Liked songs playlist can't be deleted");
+        }
+
         user.deletePlaylist(playlist);
     }
 
     @Transactional
     public void updatePlaylist(Long id, PlaylistEntity updatedPlaylist, MultipartFile preview) throws IOException {
         PlaylistEntity playlist = getPlaylistById(id);
+
+        if (playlist.isLikedSongsPlaylist()) {
+            throw new ForbiddenException("Liked songs playlist can't be updated");
+        }
 
         if (nonNull(preview)) {
             String newPreviewId = imageService.saveImage(preview);

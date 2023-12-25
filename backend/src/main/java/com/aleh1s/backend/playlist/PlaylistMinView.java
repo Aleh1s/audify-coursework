@@ -4,6 +4,7 @@ public record PlaylistMinView(
         Long id,
         String name,
         int totalSongs,
+        boolean isLikedSongsPlaylist,
         String previewId
 ) {
 }

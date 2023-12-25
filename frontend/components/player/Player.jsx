@@ -14,19 +14,22 @@ import {
     VStack
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
-import {useSelector} from "react-redux";
-import {getSongById} from "../../services/client.js";
-import {errorNotification} from "../../services/notification.js";
+import {useDispatch, useSelector} from "react-redux";
+import {addSongToPlaylist, getPlaylists, getSongById, removeSongFromPlaylist} from "../../services/client.js";
+import {errorNotification, successNotification} from "../../services/notification.js";
 import {API_BASE_URL} from "../../constants/client.js";
 import {formatTime} from "../../utils/utils.js";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal.jsx";
+import {setPlaylists} from "../../store/userSlice.js";
 
 const Player = () => {
     const currentSongId = useSelector(state => state.player.currentSongId)
+    const likedSongsPlaylistId = useSelector(state => state.user.likedSongsPlaylistId)
+    const dispatch = useDispatch()
 
     const {isOpen, onOpen, onClose} = useDisclosure()
 
-    const [song, setSong] = useState({})
+    const [song, setSong] = useState(null)
     const audioRef = useRef(null)
 
     const [isPlaying, setIsPlaying] = useState(false)
@@ -86,17 +89,73 @@ const Player = () => {
             audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
             audioRef.current.addEventListener('canplay', handleCanPlay);
 
-
             return () => {
                 audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
                 audioRef.current.removeEventListener('canplay', handleCanPlay);
             };
         }
-    }, [audioRef.current]);
+    }, [song]);
+
+    const fetchPlaylists = () => {
+        getPlaylists().then(res => {
+            dispatch(setPlaylists(res.data))
+        }).catch(err => {
+            console.log(err)
+            errorNotification(
+                err.code,
+                err.response.data.message
+            )
+        })
+    }
+
+    const likeSong = () => {
+        if (likedSongsPlaylistId && song) {
+            addSongToPlaylist(likedSongsPlaylistId, song.id).then(() => {
+                setIsLiked(true)
+                fetchPlaylists()
+                successNotification(
+                    "Success",
+                    `Song was added to liked songs playlist`
+                )
+            }).catch(err => {
+                console.log(err)
+                errorNotification(
+                    err.code,
+                    err.response.data.message
+                )
+            })
+        }
+    }
+
+    const unlikeSong = () => {
+        if (likedSongsPlaylistId && song) {
+            removeSongFromPlaylist(likedSongsPlaylistId, song.id).then(() => {
+                setIsLiked(false)
+                fetchPlaylists()
+                successNotification(
+                    "Success",
+                    `Song was removed from liked songs playlist`
+                )
+            }).catch(err => {
+                console.log(err)
+                errorNotification(
+                    err.code,
+                    err.response.data.message
+                )
+            })
+        }
+    }
 
     return (
         <>
-            <AddSongToPlaylistModal song={song} isOpen={isOpen} onClose={onClose}/>
+            {
+                song?.id
+                    ? <AddSongToPlaylistModal song={song} isOpen={isOpen} onClose={() => {
+                        onClose()
+                        fetchPlaylists()
+                    }}/>
+                    : null
+            }
             <GridItem colSpan={2} bg={'gray.800'} p={'8px'}>
                 <Grid
                     w={'100%'}
@@ -113,11 +172,15 @@ const Player = () => {
                             alignItems={'center'}
                         >
                             <GridItem>
-                                <Img src={`${API_BASE_URL}/images/${song.previewId}`} borderRadius={'5px'}/>
+                                {
+                                    song
+                                        ? <Img src={`${API_BASE_URL}/images/${song.previewId}`} borderRadius={'5px'}/>
+                                        : null
+                                }
                             </GridItem>
                             <GridItem>
-                                <Heading size={'md'} color={'white'}>{song.name}</Heading>
-                                <Text color={'gray.200'}>{song.artist}</Text>
+                                <Heading size={'md'} color={'white'}>{song?.name}</Heading>
+                                <Text color={'gray.200'}>{song?.artist}</Text>
                             </GridItem>
                         </Grid>
                     </GridItem>
@@ -208,7 +271,7 @@ const Player = () => {
                                             src={'/player/unlike-btn.png'}
                                             h={'24px'}
                                             _hover={{cursor: 'pointer'}}
-                                            onClick={() => setIsLiked(false)}
+                                            onClick={unlikeSong}
                                         />
                                     </Tooltip>
                                     : <Tooltip label={'Like'}>
@@ -216,7 +279,7 @@ const Player = () => {
                                             src={'/player/like-btn.png'}
                                             h={'24px'}
                                             _hover={{cursor: 'pointer'}}
-                                            onClick={() => setIsLiked(true)}
+                                            onClick={likeSong}
                                         />
                                     </Tooltip>
                             }
@@ -246,11 +309,10 @@ const Player = () => {
                     </GridItem>
                 </Grid>
                 {
-                    song.id
+                    song?.id
                         ? <audio ref={audioRef} src={`${API_BASE_URL}/audios/${song.audioId}`} loop/>
                         : null
                 }
-
             </GridItem>
         </>
     )

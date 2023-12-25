@@ -72,6 +72,18 @@ public class DefaultExceptionHandler {
         return ResponseEntity.status(CONFLICT).body(apiError);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleException(ForbiddenException e,
+                                                    HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                FORBIDDEN.value(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(FORBIDDEN).body(apiError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e,
                                                     HttpServletRequest request) {
