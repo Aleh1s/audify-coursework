@@ -28,8 +28,8 @@ export const createPlaylist = async (playlist, preview) => {
     return await axios.post(`${API_BASE_URL}/playlists`, formData)
 }
 
-export const getPlaylists = async () => {
-    return await axios.get(`${API_BASE_URL}/playlists`)
+export const getPlaylists = async (relatedSongId) => {
+    return await axios.get(`${API_BASE_URL}/playlists${relatedSongId ? `?related_song=${relatedSongId}` : ''}`)
 }
 
 export const getPlaylistById = async (id) => {
@@ -51,4 +51,12 @@ export const updatePlaylistById = async (id, playlist, preview) => {
     }
     formData.append('playlist', new Blob([JSON.stringify(playlist)], {type: 'application/json'}));
     return await axios.put(`${API_BASE_URL}/playlists/${id}`, formData)
+}
+
+export const addSongToPlaylist = async (playlistId, songId) => {
+    return await axios.post(`${API_BASE_URL}/playlists/${playlistId}/songs/${songId}`)
+}
+
+export const removeSongFromPlaylist = async (playlistId, songId) => {
+    return await axios.delete(`${API_BASE_URL}/playlists/${playlistId}/songs/${songId}`)
 }

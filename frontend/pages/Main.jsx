@@ -1,7 +1,7 @@
 import {Grid, GridItem} from "@chakra-ui/react";
 import Header from "../components/Header.jsx";
 import LeftSide from "../components/LeftSide.jsx";
-import Player from "../components/Player.jsx";
+import Player from "../components/player/Player.jsx";
 import {Outlet} from "react-router-dom";
 
 

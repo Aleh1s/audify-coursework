@@ -11,6 +11,8 @@ import Category from "../components/Category.jsx";
 import PlaylistView from "../components/playlist/PlaylistView.jsx";
 import AdminContent from "../components/AdminContent.jsx";
 import AdminUsers from "../components/AdminUsers.jsx";
+import {Provider} from "react-redux";
+import store from "../store/store.js";
 
 const {ToastContainer} = createStandaloneToast();
 const router = createBrowserRouter([
@@ -52,9 +54,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <ChakraProvider>
-            <RouterProvider router={router}/>
-            <ToastContainer/>
-        </ChakraProvider>
+        <Provider store={store}>
+            <ChakraProvider>
+                <RouterProvider router={router}/>
+                <ToastContainer/>
+            </ChakraProvider>
+        </Provider>
     </React.StrictMode>,
 )

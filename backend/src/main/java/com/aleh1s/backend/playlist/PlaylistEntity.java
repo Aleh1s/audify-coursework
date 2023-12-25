@@ -49,6 +49,9 @@ public class PlaylistEntity {
     @Transient
     private long totalDurationInSeconds;
 
+    @Transient
+    private boolean isContainRelatedSong;
+
     public PlaylistEntity(String name) {
         this.name = name;
     }

@@ -3,21 +3,21 @@ package com.aleh1s.backend.playlist;
 import com.aleh1s.backend.exception.DuplicateResourceException;
 import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.image.ImageService;
-import com.aleh1s.backend.song.SongEntity;
 import com.aleh1s.backend.song.SongService;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+
+import static java.util.Objects.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +42,18 @@ public class PlaylistService {
         playlistRepository.save(playlist);
     }
 
-    public Set<PlaylistEntity> getPlaylists() {
+    public Set<PlaylistEntity> getPlaylists(String relatedSongId) {
         // dummy user
         UserEntity user = userService.getUserById(1L);
+
+        if (nonNull(relatedSongId)) {
+            Set<PlaylistEntity> playlists = playlistRepository.findPlaylistByOwnerId(user.getId());
+            playlists.stream()
+                    .filter(playlist -> playlist.getSongs().contains(relatedSongId))
+                    .forEach(playlist -> playlist.setContainRelatedSong(true));
+            return playlists;
+        }
+
         Hibernate.initialize(user.getPlaylists());
         return user.getPlaylists();
     }
@@ -105,7 +114,7 @@ public class PlaylistService {
     public void updatePlaylist(Long id, PlaylistEntity updatedPlaylist, MultipartFile preview) throws IOException {
         PlaylistEntity playlist = getPlaylistById(id);
 
-        if (Objects.nonNull(preview)) {
+        if (nonNull(preview)) {
             String newPreviewId = imageService.saveImage(preview);
             imageService.deleteImageById(playlist.getPreviewId());
             playlist.setPreviewId(newPreviewId);

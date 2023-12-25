@@ -9,6 +9,10 @@ spring:
       max-request-size: 20MB
   jpa:
     open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 cors:
   allowed-origins: "*"

@@ -14,6 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,11 +31,17 @@ public class PlaylistController {
     private final SongService songService;
 
     @GetMapping
-    public ResponseEntity<?> getPlaylists() {
-        List<PlaylistMinView> playlists = playlistService.getPlaylists().stream()
-                .map(dtoMapper::toPlaylistMinView)
+    public ResponseEntity<?> getPlaylists(
+            @RequestParam(value = "related_song", required = false) String relatedSongId
+    ) {
+        Set<PlaylistEntity> playlists = playlistService.getPlaylists(relatedSongId);
+        Function<PlaylistEntity, ?> mapper = isNull(relatedSongId)
+                ? dtoMapper::toPlaylistMinView
+                : dtoMapper::toPlaylistRelatedSongView;
+        List<?> body = playlists.stream()
+                .map(mapper)
                 .toList();
-        return ResponseEntity.ok(playlists);
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping
