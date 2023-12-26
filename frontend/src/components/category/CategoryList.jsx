@@ -1,8 +1,8 @@
 import {Box, Center, Heading, HStack, Spinner, Tooltip} from "@chakra-ui/react";
-import {css} from "../style/scroll.js";
+import {css} from "../../style/scroll.js";
 import {useEffect, useState} from "react";
-import {getCategories} from "../services/client.js";
-import {errorNotification} from "../services/notification.js";
+import {getCategories} from "../../services/client.js";
+import {errorNotification} from "../../services/notification.js";
 import {useNavigate} from "react-router-dom";
 
 const Category = ({category}) => {

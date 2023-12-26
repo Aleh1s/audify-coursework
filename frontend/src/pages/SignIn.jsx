@@ -1,8 +1,8 @@
 import {Box, Flex, Heading, Stack, Text} from '@chakra-ui/react'
-import SignInForm from "./SignInForm.jsx";
+import SignInForm from "../components/login/SignInForm.jsx";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../context/AuthContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const SignIn = () => {
 
@@ -17,6 +17,7 @@ const SignIn = () => {
 
     return (
         <Flex
+            color={'white'}
             minH={'100vh'}
             align={'center'}
             justify={'center'}

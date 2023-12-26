@@ -1,12 +1,12 @@
 import {VStack} from "@chakra-ui/react";
-import {css} from "../style/scroll.js";
-import SongItem from "./SongItem.jsx";
-import DelimiterWithText from "./DelimiterWithText.jsx";
+import {css} from "../../style/scroll.js";
+import SongItem from "../song/SongItem.jsx";
+import DelimiterWithText from "../shared/DelimiterWithText.jsx";
 import {useEffect, useState} from "react";
-import {getCategories, getSongs} from "../services/client.js";
+import {getCategories, getSongs} from "../../services/client.js";
 import {useParams} from "react-router-dom";
-import SearchInput from "./shared/SearchInput.jsx";
-import {errorNotification} from "../services/notification.js";
+import SearchInput from "../shared/SearchInput.jsx";
+import {errorNotification} from "../../services/notification.js";
 
 const Category = () => {
 

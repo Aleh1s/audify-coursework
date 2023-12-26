@@ -1,6 +1,6 @@
-import SearchInput from "./shared/SearchInput.jsx";
-import DelimiterWithText from "./DelimiterWithText.jsx";
-import {css} from "../style/scroll.js";
+import SearchInput from "../shared/SearchInput.jsx";
+import DelimiterWithText from "../shared/DelimiterWithText.jsx";
+import {css} from "../../style/scroll.js";
 import {VStack} from "@chakra-ui/react";
 import UserItem from "./UserItem.jsx";
 

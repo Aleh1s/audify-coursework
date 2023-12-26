@@ -1,5 +1,5 @@
 import './App.css'
-import Main from "../pages/Main.jsx";
+import Main from "./pages/Main.jsx";
 import {Container} from "@chakra-ui/react";
 
 function App() {

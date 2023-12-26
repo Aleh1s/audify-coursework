@@ -1,10 +1,10 @@
 import {Center, Spinner, VStack} from "@chakra-ui/react";
 import DelimiterWithText from "./DelimiterWithText.jsx";
-import {css} from "../style/scroll.js";
-import SongItem from "./SongItem.jsx";
-import SearchInput from "./shared/SearchInput.jsx";
+import {css} from "../../style/scroll.js";
+import SongItem from "../song/SongItem.jsx";
+import SearchInput from "./SearchInput.jsx";
 import {useEffect, useState} from "react";
-import {getSongs} from "../services/client.js";
+import {getSongs} from "../../services/client.js";
 
 const GlobalPlaylist = () => {
 

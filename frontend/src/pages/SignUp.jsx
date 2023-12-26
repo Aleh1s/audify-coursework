@@ -1,8 +1,8 @@
-import {Flex, Heading, Stack, Text, useColorModeValue,} from '@chakra-ui/react'
-import SignUpForm from "./SignUpForm.jsx";
+import {Flex, Heading, Stack, Text,} from '@chakra-ui/react'
+import SignUpForm from "../components/registration/SignUpForm.jsx";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../context/AuthContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const SignUp = () => {
     const { isAuthenticated } = useAuth()

@@ -1,8 +1,8 @@
 import {Box, Grid, GridItem, Heading, HStack, Img, Text} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {setCurrentSongId} from "../store/playerSlice.js";
-import {API_BASE_URL} from "../constants/client.js";
+import {setCurrentSongId} from "../../store/playerSlice.js";
+import {API_BASE_URL} from "../../constants/client.js";
 
 const SongItem = ({song}) => {
 

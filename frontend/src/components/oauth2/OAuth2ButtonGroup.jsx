@@ -1,5 +1,5 @@
 import {Center, HStack, Link} from '@chakra-ui/react'
-import {GitHubIcon, GoogleIcon} from './IconProvider.jsx'
+import {GoogleIcon} from './IconProvider.jsx'
 import {GOOGLE_AUTH_URL} from "../../constants/client.js"
 
 const providers = [

@@ -1,17 +1,18 @@
-import PlaylistList from "./playlist/PlaylistList.jsx";
+import PlaylistList from "../playlist/PlaylistList.jsx";
 import DelimiterWithText from "./DelimiterWithText.jsx";
 import SectionList from "./SectionList.jsx";
 import {Button, GridItem, Heading, useDisclosure} from "@chakra-ui/react";
-import AddContentButton from "./shared/AddContentButton.jsx";
-import '../src/App.css'
-import AddSongModalContent from "./AddSongModalContent.jsx";
-import CreatePlaylistModal from "./playlist/CreatePlaylistModal.jsx";
+import AddContentButton from "./AddContentButton.jsx";
+import '../../App.css'
+import AddSongModalContent from "../admin/AddSongModalContent.jsx";
+import CreatePlaylistModal from "../playlist/CreatePlaylistModal.jsx";
 import {AddIcon} from "@chakra-ui/icons";
-import {getPlaylists} from "../services/client.js";
-import {setPlaylists} from "../store/userSlice.js";
-import {errorNotification} from "../services/notification.js";
+import {getPlaylists} from "../../services/client.js";
+import {setPlaylists} from "../../store/userSlice.js";
+import {errorNotification} from "../../services/notification.js";
 import {useDispatch} from "react-redux";
-import {useAuth} from "../context/AuthContext.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
+import AddSongModal from "../admin/AddSongModal.jsx";
 
 const userSections = [
     {
@@ -88,8 +89,12 @@ const LeftSide = () => {
         })
     }
 
-    const onCreateSuccess = () => {
+    const onCreatePlaylistSuccess = () => {
         fetchPlaylists()
+        onClose()
+    }
+
+    const onAddSongSuccess = () => {
         onClose()
     }
 
@@ -108,9 +113,15 @@ const LeftSide = () => {
                                 textBg={'gray.700'}
                                 text={'Control'}
                             />
-                            <AddContentButton title={'Add Song'}>
-                                <AddSongModalContent/>
-                            </AddContentButton>
+                            <AddButton
+                                title={'Add Song'}
+                                onOpen={onOpen}
+                            />
+                            <AddSongModal
+                                isOpen={isOpen}
+                                onClose={onClose}
+                                onSuccess={onAddSongSuccess}
+                            />
                         </>
                     )
                     : (
@@ -129,7 +140,7 @@ const LeftSide = () => {
                                 onOpen={onOpen}
                             />
                             <CreatePlaylistModal
-                                onSuccess={onCreateSuccess}
+                                onSuccess={onCreatePlaylistSuccess}
                                 onClose={onClose}
                                 isOpen={isOpen}
                             />

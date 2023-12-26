@@ -1,4 +1,4 @@
-import {Box, Button, HStack, Link, Stack, useColorModeValue} from "@chakra-ui/react";
+import {Box, Button, Link, Stack} from "@chakra-ui/react";
 import {Form, Formik} from "formik";
 import {register} from "../../services/client.js";
 import {errorNotification, successNotification} from "../../services/notification.js";
@@ -19,6 +19,7 @@ const SignUpForm = () => {
             boxShadow={'lg'}
             p={8}
             w={'400px'}
+            color={'white'}
         >
             <Formik
                 validateOnMount={true}
@@ -36,9 +37,13 @@ const SignUpForm = () => {
                         .required('Email is required')
                         .email('Invalid email address'),
                     password: Yup.string()
-                        .min(8, 'Must be at least 6 characters')
-                        .max(255, 'Must be 20 characters or less')
-                        .required('Password is required') //TODO: Add password validation
+                        .required('Password is required')
+                        .min(8, 'Password must be at least 8 characters')
+                        .max(64, 'Password must not exceed 64 characters')
+                        .matches(
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&])[A-Za-z\d!@#$%^&]+$/,
+                            'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!, @, #, $, %, ^, &)'
+                        ),
                 })}
                 onSubmit={(user, {setSubmitting}) => {
                     setSubmitting(true)

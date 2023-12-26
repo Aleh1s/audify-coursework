@@ -3,22 +3,22 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import {ChakraProvider, createStandaloneToast} from "@chakra-ui/react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import Main from "../pages/Main.jsx";
-import CategoryList from "../components/CategoryList.jsx";
-import SongView from "../components/SongView.jsx";
-import GlobalPlaylist from "../components/GlobalPlaylist.jsx";
-import Category from "../components/Category.jsx";
-import PlaylistView from "../components/playlist/PlaylistView.jsx";
-import AdminContent from "../components/AdminContent.jsx";
-import AdminUsers from "../components/AdminUsers.jsx";
+import Main from "./pages/Main.jsx";
+import CategoryList from "./components/category/CategoryList.jsx";
+import SongView from "./components/song/SongView.jsx";
+import GlobalPlaylist from "./components/shared/GlobalPlaylist.jsx";
+import Category from "./components/category/Category.jsx";
+import PlaylistView from "./components/playlist/PlaylistView.jsx";
+import AdminContent from "./components/admin/AdminContent.jsx";
+import AdminUsers from "./components/admin/AdminUsers.jsx";
 import {Provider} from "react-redux";
-import store from "../store/store.js";
-import ProtectedRoute from "../components/security/ProtectedRoute.jsx";
-import SignIn from "../components/login/SignIn.jsx";
-import AuthProvider from "../context/AuthContext.jsx";
-import RedirectHandler from "../components/oauth2/RedirectHandler.jsx";
-import SignUp from "../components/registration/SignUp.jsx";
-import AdminRoute from "../components/security/AdminRoute.jsx";
+import store from "./store/store.js";
+import ProtectedRoute from "./components/security/ProtectedRoute.jsx";
+import SignIn from "./pages/SignIn.jsx";
+import AuthProvider from "./context/AuthContext.jsx";
+import RedirectHandler from "./components/oauth2/RedirectHandler.jsx";
+import SignUp from "./pages/SignUp.jsx";
+import AdminRoute from "./components/security/AdminRoute.jsx";
 
 const {ToastContainer} = createStandaloneToast();
 const router = createBrowserRouter([

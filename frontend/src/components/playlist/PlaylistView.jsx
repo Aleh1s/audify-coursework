@@ -15,8 +15,8 @@ import {
     VStack
 } from "@chakra-ui/react";
 import {css} from "../../style/scroll.js";
-import DelimiterWithText from "../DelimiterWithText.jsx";
-import SongItem from "../SongItem.jsx";
+import DelimiterWithText from "../shared/DelimiterWithText.jsx";
+import SongItem from "../song/SongItem.jsx";
 import {useEffect, useState} from "react";
 import {getPlaylistById, getPlaylists, getSongsByPlaylistId} from "../../services/client.js";
 import {useNavigate, useParams} from "react-router-dom";

@@ -74,8 +74,4 @@ public class JwtUtil {
                 .getExpiration()
                 .before(Date.from(Instant.now()));
     }
-
-    public boolean hasTokenSameSubject(String jwt, String subject) {
-        return extractSubject(jwt).equals(subject);
-    }
 }

@@ -4,7 +4,6 @@ import com.aleh1s.backend.exception.OAuth2AuthenticationProcessingException;
 import com.aleh1s.backend.oauth2.user.OAuth2UserInfo;
 import com.aleh1s.backend.oauth2.user.OAuth2UserInfoFactory;
 import com.aleh1s.backend.playlist.PlaylistEntity;
-import com.aleh1s.backend.playlist.PlaylistRepository;
 import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserRepository;

@@ -1,8 +1,8 @@
-import SearchInput from "./shared/SearchInput.jsx";
+import SearchInput from "../shared/SearchInput.jsx";
 import {VStack} from "@chakra-ui/react";
-import DelimiterWithText from "./DelimiterWithText.jsx";
-import {css} from "../style/scroll.js";
-import SongItem from "./SongItem.jsx";
+import DelimiterWithText from "../shared/DelimiterWithText.jsx";
+import {css} from "../../style/scroll.js";
+import SongItem from "../song/SongItem.jsx";
 
 const songs = [
     {

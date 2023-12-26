@@ -20,9 +20,9 @@ import {useEffect, useState} from "react";
 import {CloseIcon} from "@chakra-ui/icons";
 import {FieldArray, Form, Formik} from "formik";
 import * as Yup from "yup";
-import {getCategories, saveSong} from "../services/client.js";
-import {FileInput, MyInput, MySelect, MyTextarea} from "./shared/Inputs.jsx";
-import {errorNotification, successNotification} from "../services/notification.js";
+import {getCategories, saveSong} from "../../services/client.js";
+import {FileInput, MyInput, MySelect, MyTextarea} from "../shared/Inputs.jsx";
+import {errorNotification, successNotification} from "../../services/notification.js";
 
 Yup.addMethod(Yup.array, 'unique', function (message, mapper = a => a) {
     return this.test('unique', message, function (list) {

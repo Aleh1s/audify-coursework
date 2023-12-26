@@ -17,8 +17,6 @@ import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.image.ImageService;
 import com.aleh1s.backend.playlist.PlaylistEntity;
 import com.aleh1s.backend.playlist.PlaylistService;
-import com.aleh1s.backend.user.UserEntity;
-import com.aleh1s.backend.user.UserService;
 import com.aleh1s.backend.util.AudioUtils;
 import com.aleh1s.backend.util.PaginationUtils;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -36,7 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 import static co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType.CrossFields;
 import static java.util.Objects.isNull;

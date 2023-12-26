@@ -1,11 +1,11 @@
 import {Grid, GridItem, Heading, Img, VStack, Text, HStack, Badge, Box} from "@chakra-ui/react";
-import {css} from "../style/scroll.js";
-import DelimiterWithText from "./DelimiterWithText.jsx";
+import {css} from "../../style/scroll.js";
+import DelimiterWithText from "../shared/DelimiterWithText.jsx";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {getSongById} from "../services/client.js";
-import {errorNotification} from "../services/notification.js";
-import {API_BASE_URL} from "../constants/client.js";
+import {getSongById} from "../../services/client.js";
+import {errorNotification} from "../../services/notification.js";
+import {API_BASE_URL} from "../../constants/client.js";
 
 const SongView = () => {
 

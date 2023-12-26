@@ -22,7 +22,7 @@ public class RegistrationController {
     private final JwtUtil jwtUtil;
 
     @PostMapping
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody RegistrationRequest request) throws IOException {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody RegistrationRequest request) {
         registrationService.registerUser(request);
         String jwt = jwtUtil.issueToken(request.email(), "ROLE_USER");
         return ResponseEntity.status(HttpStatus.CREATED)
