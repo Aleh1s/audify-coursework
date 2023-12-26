@@ -7,6 +7,7 @@ import com.aleh1s.backend.image.ImageService;
 import com.aleh1s.backend.song.SongService;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserService;
+import com.aleh1s.backend.util.ContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,13 @@ import static java.util.Objects.nonNull;
 public class PlaylistService {
 
     private final PlaylistRepository playlistRepository;
-    private final UserService userService;
     private final ImageService imageService;
     private final SongService songService;
+    private final UserService userService;
 
     @Transactional
     public void savePlaylist(PlaylistEntity playlist, MultipartFile preview) throws IOException {
-        // dummy user
-        UserEntity user = userService.getUserById(1L);
+        UserEntity user = userService.getCurrentUser();
         requireUniquePlaylistName(playlist, user.getPlaylists());
 
         String previewId = imageService.saveImage(preview);
@@ -43,11 +43,10 @@ public class PlaylistService {
 
 
     public Set<PlaylistEntity> getPlaylists(String relatedSongId) {
-        // dummy user
-        UserEntity user = userService.getUserById(1L);
+        UserEntity user = userService.getCurrentUser();
 
         if (nonNull(relatedSongId)) {
-            Set<PlaylistEntity> playlists = playlistRepository.findPlaylistByOwnerId(user.getId());
+            Set<PlaylistEntity> playlists = playlistRepository.findPlaylistEntitiesByOwnerId(user.getId());
             playlists.stream()
                     .filter(playlist -> playlist.getSongs().contains(relatedSongId))
                     .forEach(playlist -> playlist.setContainRelatedSong(true));
@@ -101,8 +100,7 @@ public class PlaylistService {
 
     @Transactional
     public void deletePlaylistById(Long id) {
-        // dummy user
-        UserEntity user = userService.getUserById(1L);
+        UserEntity user = userService.getCurrentUser();
         PlaylistEntity playlist = user.getPlaylists().stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst()
@@ -130,5 +128,10 @@ public class PlaylistService {
         }
 
         playlist.setName(updatedPlaylist.getName());
+    }
+
+    public PlaylistEntity getLikedSongsPlaylist() {
+        Long userId = ContextUtil.getPrincipal().getId();
+        return playlistRepository.findLikedSongsPlaylistByOwnerIdFetchSongs(userId);
     }
 }

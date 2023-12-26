@@ -3,19 +3,25 @@ package com.aleh1s.backend.dto;
 import com.aleh1s.backend.playlist.*;
 import com.aleh1s.backend.registration.RegistrationRequest;
 import com.aleh1s.backend.song.*;
+import com.aleh1s.backend.user.UserDto;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserRole;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DtoMapper {
-    public UserEntity toUser(RegistrationRequest registrationRequest) {
-        return new UserEntity(
-                registrationRequest.firstName(),
-                registrationRequest.lastName(),
-                registrationRequest.email(),
-                registrationRequest.password(),
-                UserRole.USER
+
+    public UserDto toUserDto(UserEntity userEntity) {
+        return new UserDto(
+                userEntity.getId(),
+                userEntity.getName(),
+                userEntity.getEmail(),
+                userEntity.getAuthProvider(),
+                userEntity.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList(),
+                userEntity.getUsername()
         );
     }
 
@@ -57,7 +63,8 @@ public class DtoMapper {
                 songEntity.getText(),
                 songEntity.getPreviewId(),
                 songEntity.getAudioId(),
-                songEntity.getDurationInSeconds()
+                songEntity.getDurationInSeconds(),
+                songEntity.isLiked()
         );
     }
 
@@ -94,6 +101,15 @@ public class DtoMapper {
                 playlist.getTotalSongs(),
                 playlist.isLikedSongsPlaylist(),
                 playlist.isContainRelatedSong()
+        );
+    }
+
+    public UserEntity toUser(RegistrationRequest request) {
+        return new UserEntity(
+                request.name(),
+                request.email(),
+                request.password(),
+                UserRole.USER
         );
     }
 }

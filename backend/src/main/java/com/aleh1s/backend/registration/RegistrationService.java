@@ -23,9 +23,10 @@ public class RegistrationService {
     private final DtoMapper dtoMapper;
 
     @Transactional
-    public void registerUser(RegistrationRequest request) throws IOException {
+    public void registerUser(RegistrationRequest request) {
         requireUniqueEmail(request.email());
         UserEntity newUserEntity = dtoMapper.toUser(request);
+
         newUserEntity.setPassword(passwordEncoder.encode(request.password()));
         newUserEntity.setAuthProvider(AuthProvider.INTERNAL);
 

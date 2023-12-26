@@ -13,6 +13,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  codec:
+    max-in-memory-size: 5MB
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+
+jwt:
+  issuer: http://localhost:8080
 
 cors:
   allowed-origins: "*"
@@ -35,3 +49,7 @@ logging:
       springframework:
         web: DEBUG
     tracer: TRACE
+
+app:
+  oauth2:
+    authorized-redirect-uri: http://localhost:5173/oauth2/redirect

@@ -15,13 +15,6 @@ public class AudioController {
 
     private final AudioService audioService;
 
-    @PostMapping
-    public ResponseEntity<?> uploadAudio(@RequestParam("audio") MultipartFile audio) throws IOException {
-        String id = audioService.saveAudio(audio);
-        return ResponseEntity.created(URI.create("/api/v1/audios/%s".formatted(id)))
-                .body(new UploadAudioResponse(id));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> streamAudio(@PathVariable("id") String id, @RequestHeader(name = "range", required = false) String rangeStr) {
         return audioService.streamAudio(id, AudioRange.parse(rangeStr));

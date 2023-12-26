@@ -33,7 +33,6 @@ const Player = () => {
     const audioRef = useRef(null)
 
     const [isPlaying, setIsPlaying] = useState(false)
-    const [isLiked, setIsLiked] = useState(false)
 
     const [currentTime, setCurrentTime] = useState(0)
 
@@ -43,6 +42,7 @@ const Player = () => {
         if (currentSongId) {
             getSongById(currentSongId).then(res => {
                 setSong(res.data)
+                console.log(res.data)
             }).catch(err => {
                 console.log(err)
                 errorNotification(
@@ -111,7 +111,7 @@ const Player = () => {
     const likeSong = () => {
         if (likedSongsPlaylistId && song) {
             addSongToPlaylist(likedSongsPlaylistId, song.id).then(() => {
-                setIsLiked(true)
+                setSong({...song, isLiked: true})
                 fetchPlaylists()
                 successNotification(
                     "Success",
@@ -130,7 +130,7 @@ const Player = () => {
     const unlikeSong = () => {
         if (likedSongsPlaylistId && song) {
             removeSongFromPlaylist(likedSongsPlaylistId, song.id).then(() => {
-                setIsLiked(false)
+                setSong({...song, isLiked: false})
                 fetchPlaylists()
                 successNotification(
                     "Success",
@@ -261,11 +261,15 @@ const Player = () => {
                                     src={'/player/add-to-playlist-btn.png'}
                                     h={'24px'}
                                     _hover={{cursor: 'pointer'}}
-                                    onClick={onOpen}
+                                    onClick={() => {
+                                        if (song) {
+                                            onOpen()
+                                        }
+                                    }}
                                 />
                             </Tooltip>
                             {
-                                isLiked
+                                song?.isLiked
                                     ? <Tooltip label={'Unlike'}>
                                         <Img
                                             src={'/player/unlike-btn.png'}

@@ -7,11 +7,9 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.GenerationType.*;
@@ -23,19 +21,17 @@ import static jakarta.persistence.GenerationType.*;
 @NoArgsConstructor
 @Table(name = "_user")
 @EqualsAndHashCode(of = "id")
-public class UserEntity implements UserDetails {
+public class UserEntity implements UserDetails, OAuth2User {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(name = "name", nullable = false)
+    private String name;
     @Column(name = "email", nullable = false)
     private String email;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
     @Column(name = "role", nullable = false, length = 20)
     @Enumerated(STRING)
@@ -50,33 +46,51 @@ public class UserEntity implements UserDetails {
     private Set<PlaylistEntity> playlists = new HashSet<>();
 
     public UserEntity(
-            String firstName,
-            String lastName,
+            String name,
             String email,
             String password,
             UserRole role
     ) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
     public UserEntity(
-            String firstName,
-            String lastName,
+            String name,
             String email,
             String password,
             UserRole role,
             AuthProvider authProvider
     ) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
         this.authProvider = authProvider;
+    }
+
+    public UserEntity(
+            String name,
+            String email,
+            UserRole role,
+            AuthProvider authProvider
+    ) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.authProvider = authProvider;
+    }
+
+    @Override
+    public <A> A getAttribute(String name) {
+        return OAuth2User.super.getAttribute(name);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
     }
 
     @Override

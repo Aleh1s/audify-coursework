@@ -17,6 +17,8 @@ import com.aleh1s.backend.exception.ResourceNotFoundException;
 import com.aleh1s.backend.image.ImageService;
 import com.aleh1s.backend.playlist.PlaylistEntity;
 import com.aleh1s.backend.playlist.PlaylistService;
+import com.aleh1s.backend.user.UserEntity;
+import com.aleh1s.backend.user.UserService;
 import com.aleh1s.backend.util.AudioUtils;
 import com.aleh1s.backend.util.PaginationUtils;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -76,8 +78,15 @@ public class SongService {
     }
 
     public SongEntity getSongById(String songId) {
-        return songRepository.findById(songId)
+        SongEntity song = songRepository.findById(songId)
                 .orElseThrow(() -> new ResourceNotFoundException("Song with id %s not found".formatted(songId)));
+
+        PlaylistEntity likedSongsPlaylist = playlistService.getLikedSongsPlaylist();
+        if (likedSongsPlaylist.getSongs().contains(song.getId())) {
+            song.setLiked(true);
+        }
+
+        return song;
     }
 
     public Page<SongEntity> findSongsByQuery(SongsSearchRequest request) throws IOException {

@@ -13,12 +13,18 @@ import AdminContent from "../components/AdminContent.jsx";
 import AdminUsers from "../components/AdminUsers.jsx";
 import {Provider} from "react-redux";
 import store from "../store/store.js";
+import ProtectedRoute from "../components/security/ProtectedRoute.jsx";
+import SignIn from "../components/login/SignIn.jsx";
+import AuthProvider from "../context/AuthContext.jsx";
+import RedirectHandler from "../components/oauth2/RedirectHandler.jsx";
+import SignUp from "../components/registration/SignUp.jsx";
+import AdminRoute from "../components/security/AdminRoute.jsx";
 
 const {ToastContainer} = createStandaloneToast();
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Main/>,
+        element: <ProtectedRoute><Main/></ProtectedRoute>,
         children: [
             {
                 path: '/',
@@ -42,13 +48,25 @@ const router = createBrowserRouter([
             },
             {
                 path: '/admin/content',
-                element: <AdminContent/>,
+                element: <AdminRoute><AdminContent/></AdminRoute>,
             },
             {
                 path: '/admin/users',
-                element: <AdminUsers/>
+                element: <AdminRoute><AdminUsers/></AdminRoute>
             }
         ]
+    },
+    {
+        path: '/login',
+        element: <SignIn/>
+    },
+    {
+        path: "/oauth2/redirect",
+        element: <RedirectHandler/>
+    },
+    {
+        path: '/registration',
+        element: <SignUp/>
     }
 ])
 
@@ -56,7 +74,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <Provider store={store}>
             <ChakraProvider>
-                <RouterProvider router={router}/>
+                <AuthProvider>
+                    <RouterProvider router={router}/>
+                </AuthProvider>
                 <ToastContainer/>
             </ChakraProvider>
         </Provider>

@@ -11,6 +11,7 @@ import {getPlaylists} from "../services/client.js";
 import {setPlaylists} from "../store/userSlice.js";
 import {errorNotification} from "../services/notification.js";
 import {useDispatch} from "react-redux";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const userSections = [
     {
@@ -71,8 +72,7 @@ const AddButton = ({onOpen, title}) => {
 
 const LeftSide = () => {
 
-    const isAdmin = false
-
+    const {isAdmin} = useAuth()
     const {isOpen, onOpen, onClose} = useDisclosure()
     const dispatch = useDispatch()
 
@@ -96,7 +96,7 @@ const LeftSide = () => {
     return (
         <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
             {
-                isAdmin
+                isAdmin()
                     ? (
                         <>
                             <SectionList
