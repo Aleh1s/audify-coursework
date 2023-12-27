@@ -21,7 +21,8 @@ public class DtoMapper {
                 userEntity.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList(),
-                userEntity.getUsername()
+                userEntity.getUsername(),
+                userEntity.isBlocked()
         );
     }
 

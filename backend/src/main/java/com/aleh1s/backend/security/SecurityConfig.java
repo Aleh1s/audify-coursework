@@ -59,6 +59,9 @@ public class SecurityConfig {
                             HttpMethod.POST,
                             "/api/v1/songs"
                     ).hasRole("ADMIN");
+                    authorize.requestMatchers(
+                            "/api/v1/users/**"
+                    ).hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 }).sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(delegatedAuthEntryPoint))

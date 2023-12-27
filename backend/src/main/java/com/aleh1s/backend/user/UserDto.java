@@ -8,6 +8,7 @@ public record UserDto(
         String email,
         AuthProvider authProvider,
         List<String> roles,
-        String username
+        String username,
+        boolean isBlocked
 ) {
 }

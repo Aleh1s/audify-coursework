@@ -1,28 +1,43 @@
 import SearchInput from "../shared/SearchInput.jsx";
 import DelimiterWithText from "../shared/DelimiterWithText.jsx";
-import {css} from "../../style/scroll.js";
-import {VStack} from "@chakra-ui/react";
-import UserItem from "./UserItem.jsx";
-
-const users = [
-    {
-        firstName: 'Alex',
-        lastName: 'Smith',
-        email: 'alex_smith@gmail.com',
-        isBlocked: false,
-    },
-    {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john_doe@gmail.com',
-        isBlocked: true,
-    }
-]
+import {Center, Spinner} from "@chakra-ui/react";
+import UserItem from "../user/UserItem.jsx";
+import {useState} from "react";
+import {getUserByEmail} from "../../services/client.js";
+import {errorNotification} from "../../services/notification.js";
 
 const AdminUsers = () => {
+
+    const [query, setQuery] = useState('')
+    const [user, setUser] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const fetchUser = () => {
+        if (query) {
+            setIsLoading(true)
+            getUserByEmail(query).then(res => {
+                console.log(res.data)
+                setUser(res.data)
+            }).catch(err => {
+                console.log(err)
+                errorNotification(
+                    err.code,
+                    err.response.data.message
+                )
+            }).finally(() => {
+                setIsLoading(false)
+            })
+        }
+    }
+
+
+
     return (
         <>
-            <SearchInput/>
+            <SearchInput
+                setQuery={setQuery}
+                onSearch={fetchUser}
+            />
 
             <DelimiterWithText
                 color={'white'}
@@ -30,15 +45,25 @@ const AdminUsers = () => {
                 text={'Users'}
             />
 
-            <VStack
-                spacing={'20px'}
-                overflowY={'auto'}
-                maxH={'calc(100vh - 350px)'}
-                paddingRight={'10px'}
-                css={css}
-            >
-                {users.map((user, index) => <UserItem key={index} user={user}/>)}
-            </VStack>
+            {
+                isLoading
+                    ? <Center
+                        h={'calc(100vh - 350px)'}
+                        w={'100%'}
+                    >
+                        <Spinner
+                            thickness='4px'
+                            speed='0.65s'
+                            emptyColor='gray.200'
+                            color='blue.500'
+                            size='xl'
+                        />
+                    </Center>
+                    : user ? <UserItem
+                        user={user}
+                        fetchUser={fetchUser}
+                    /> : null
+            }
         </>
     )
 }

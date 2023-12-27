@@ -78,3 +78,19 @@ export const login = async (credentials) => {
 export const register = async (user) => {
     return await axios.post(`${API_BASE_URL}/registration`, user)
 }
+
+export const getUserByEmail = async (email) => {
+    return await axios.get(`${API_BASE_URL}/users/${email}`, getAuthConfig())
+}
+
+export const blockUser = async (email) => {
+    return await axios.post(`${API_BASE_URL}/users/${email}/block`, null, getAuthConfig())
+}
+
+export const unblockUser = async (email) => {
+    return await axios.post(`${API_BASE_URL}/users/${email}/unblock`, null, getAuthConfig())
+}
+
+export const changePassword = async (email, password) => {
+    return await axios.patch(`${API_BASE_URL}/users/${email}/password`, {password}, getAuthConfig())
+}

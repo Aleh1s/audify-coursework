@@ -2,9 +2,7 @@ import PlaylistList from "../playlist/PlaylistList.jsx";
 import DelimiterWithText from "./DelimiterWithText.jsx";
 import SectionList from "./SectionList.jsx";
 import {Button, GridItem, Heading, useDisclosure} from "@chakra-ui/react";
-import AddContentButton from "./AddContentButton.jsx";
 import '../../App.css'
-import AddSongModalContent from "../admin/AddSongModalContent.jsx";
 import CreatePlaylistModal from "../playlist/CreatePlaylistModal.jsx";
 import {AddIcon} from "@chakra-ui/icons";
 import {getPlaylists} from "../../services/client.js";
