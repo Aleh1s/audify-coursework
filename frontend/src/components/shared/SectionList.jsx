@@ -1,4 +1,4 @@
-import {Button, Grid, GridItem, Heading, Img, VStack} from "@chakra-ui/react";
+import {Grid, GridItem, Heading, Img, VStack} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 
 const Section = ({section}) => {

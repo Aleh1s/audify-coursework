@@ -11,7 +11,8 @@ import {
     EditablePreview,
     Flex,
     Grid,
-    GridItem, Heading,
+    GridItem,
+    Heading,
     HStack,
     IconButton,
     Input,
@@ -29,7 +30,6 @@ import {
     VStack
 } from "@chakra-ui/react";
 import Header from "../shared/Header.jsx";
-import Player from "../player/Player.jsx";
 import {Form, Formik} from "formik";
 import * as Yup from "yup";
 import {MyInput} from "../shared/Inputs.jsx";

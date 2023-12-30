@@ -4,7 +4,7 @@ import {useAuth} from "../../context/AuthContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
 
-    const { user, isAuthenticated, logout} = useAuth()
+    const { user, isAuthenticated } = useAuth()
     const navigate = useNavigate()
 
     useEffect(() => {

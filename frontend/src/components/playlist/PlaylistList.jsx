@@ -1,5 +1,4 @@
-import {Button, Center, Grid, GridItem, Heading, Img, Spinner, Text, VStack} from "@chakra-ui/react";
-import {css} from "../../style/scroll.js";
+import {Center, Grid, GridItem, Heading, Img, Spinner, VStack} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {getPlaylists} from "../../services/client.js";
 import {errorNotification} from "../../services/notification.js";

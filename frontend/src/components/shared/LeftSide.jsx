@@ -1,7 +1,6 @@
 import PlaylistList from "../playlist/PlaylistList.jsx";
-import DelimiterWithText from "./DelimiterWithText.jsx";
 import SectionList from "./SectionList.jsx";
-import {Button, Grid, GridItem, Heading, useDisclosure, VStack} from "@chakra-ui/react";
+import {Grid, GridItem, Heading, useDisclosure, VStack} from "@chakra-ui/react";
 import '../../App.css'
 import CreatePlaylistModal from "../playlist/CreatePlaylistModal.jsx";
 import {AddIcon} from "@chakra-ui/icons";

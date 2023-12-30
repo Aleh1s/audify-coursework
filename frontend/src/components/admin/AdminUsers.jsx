@@ -1,6 +1,6 @@
 import SearchInput from "../shared/SearchInput.jsx";
 import DelimiterWithText from "../shared/DelimiterWithText.jsx";
-import {Center, Heading, Spinner, Text} from "@chakra-ui/react";
+import {Center, Heading, Spinner} from "@chakra-ui/react";
 import UserItem from "../user/UserItem.jsx";
 import {useState} from "react";
 import {getUserByEmail} from "../../services/client.js";
