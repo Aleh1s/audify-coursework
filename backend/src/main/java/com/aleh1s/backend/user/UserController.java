@@ -41,4 +41,27 @@ public class UserController {
         userService.changePassword(email, request.password());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile() {
+        UserEntity user = userService.getCurrentUser();
+        UserDto userDto = dtoMapper.toUserDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<?> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        userService.changePassword(request.password());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/name")
+    public ResponseEntity<?> changeName(
+            @Valid @RequestBody ChangeNameRequest request
+    ) {
+        userService.changeName(request.name());
+        return ResponseEntity.ok().build();
+    }
 }

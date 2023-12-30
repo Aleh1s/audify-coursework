@@ -1,6 +1,6 @@
 import SearchInput from "../shared/SearchInput.jsx";
 import DelimiterWithText from "../shared/DelimiterWithText.jsx";
-import {Center, Spinner} from "@chakra-ui/react";
+import {Center, Heading, Spinner, Text} from "@chakra-ui/react";
 import UserItem from "../user/UserItem.jsx";
 import {useState} from "react";
 import {getUserByEmail} from "../../services/client.js";
@@ -22,15 +22,13 @@ const AdminUsers = () => {
                 console.log(err)
                 errorNotification(
                     err.code,
-                    err.response.data.message
+                    err.response?.data?.message
                 )
             }).finally(() => {
                 setIsLoading(false)
             })
         }
     }
-
-
 
     return (
         <>
@@ -59,10 +57,20 @@ const AdminUsers = () => {
                             size='xl'
                         />
                     </Center>
-                    : user ? <UserItem
-                        user={user}
-                        fetchUser={fetchUser}
-                    /> : null
+                    : user
+                        ? <UserItem
+                            user={user}
+                            fetchUser={fetchUser}
+                        />
+                        : <Center>
+                            <Heading
+                                fontSize={'xl'}
+                                color={'gray.500'}
+                                mt={'20px'}
+                            >
+                                Nothing here... Write email to find user
+                            </Heading>
+                        </Center>
             }
         </>
     )

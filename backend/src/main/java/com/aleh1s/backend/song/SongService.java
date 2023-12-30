@@ -34,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType.CrossFields;
 import static java.util.Objects.isNull;
@@ -140,7 +137,7 @@ public class SongService {
         return new PageImpl<>(songs, pageRequest, totalSongs);
     }
 
-    public Page<SongEntity> getSongsByIds(Collection<String> songsIds, PageRequest pageRequest) throws IOException {
+    public Page<SongEntity> getSongsByIds(List<String> songsIds, PageRequest pageRequest) throws IOException {
         IdsQuery idsQuery = QueryBuilders.ids()
                 .values(new ArrayList<>(songsIds))
                 .build();
@@ -160,9 +157,11 @@ public class SongService {
         }
 
         long totalSongs = hits.total().value();
-        List<SongEntity> songs = hits.hits().stream()
+        List<SongEntity> songs = new ArrayList<>(hits.hits().stream()
                 .map(Hit::source)
-                .toList();
+                .toList());
+
+        songs.sort(Comparator.comparingInt(song -> songsIds.indexOf(song.getId())));
 
         return new PageImpl<>(songs, pageRequest, totalSongs);
     }
@@ -208,5 +207,79 @@ public class SongService {
     @Autowired
     public void setPlaylistService(@Lazy PlaylistService playlistService) {
         this.playlistService = playlistService;
+    }
+
+    @Transactional
+    public void deleteSongById(String songId) {
+        SongEntity songToDelete = getSongById(songId);
+
+        String previewId = songToDelete.getPreviewId();
+        imageService.deleteImageById(previewId);
+
+        String audioId = songToDelete.getAudioId();
+        audioService.deleteAudioById(audioId);
+
+        playlistService.removeSongFromPlaylistsBySongId(songId);
+        songRepository.deleteById(songId);
+    }
+
+    public SongEntity getNextSong(String currentSongId, Long relatedSongPlaylistId) {
+        PlaylistEntity playlist;
+        List<String> songs;
+
+        if (nonNull(relatedSongPlaylistId)) {
+            playlist = playlistService.getPlaylistById(relatedSongPlaylistId);
+            songs = playlist.getSongs();
+
+            int index = songs.indexOf(currentSongId);
+            if (index == -1) {
+                throw new ResourceNotFoundException("Song with id %s not found in playlist with id %d".formatted(currentSongId, relatedSongPlaylistId));
+            }
+
+            if (index == songs.size() - 1) {
+                return getSongById(songs.getFirst());
+            }
+
+            return getSongById(songs.get(index + 1));
+        }
+
+        playlist = playlistService.getLikedSongsPlaylist();
+        songs = playlist.getSongs();
+
+        if (songs.isEmpty()) {
+            return getSongById(currentSongId);
+        }
+
+        return getSongById(songs.getFirst());
+    }
+
+    public SongEntity getPreviousSong(String currentSongId, Long relatedSongPlaylistId) {
+        PlaylistEntity playlist;
+        List<String> songs;
+
+        if (nonNull(relatedSongPlaylistId)) {
+            playlist = playlistService.getPlaylistById(relatedSongPlaylistId);
+            songs = playlist.getSongs();
+
+            int index = songs.indexOf(currentSongId);
+            if (index == -1) {
+                throw new ResourceNotFoundException("Song with id %s not found in playlist with id %d".formatted(currentSongId, relatedSongPlaylistId));
+            }
+
+            if (index == 0) {
+                return getSongById(currentSongId);
+            }
+
+            return getSongById(songs.get(index - 1));
+        }
+
+        playlist = playlistService.getLikedSongsPlaylist();
+        songs = playlist.getSongs();
+
+        if (songs.isEmpty()) {
+            return getSongById(currentSongId);
+        }
+
+        return getSongById(songs.getFirst());
     }
 }

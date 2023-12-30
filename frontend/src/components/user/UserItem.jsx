@@ -17,7 +17,7 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 import {LockIcon, UnlockIcon} from "@chakra-ui/icons";
-import {blockUser, changePassword, unblockUser} from "../../services/client.js";
+import {blockUser, changeUserPassword, unblockUser} from "../../services/client.js";
 import {errorNotification, successNotification} from "../../services/notification.js";
 import {useState} from "react";
 import * as Yup from "yup";
@@ -47,7 +47,7 @@ const UserItem = ({user, fetchUser}) => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         }).finally(() => {
             setIsLoading(false)
@@ -66,7 +66,7 @@ const UserItem = ({user, fetchUser}) => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         }).finally(() => {
             setIsLoading(false)
@@ -119,7 +119,7 @@ const UserItem = ({user, fetchUser}) => {
                             })}
                             onSubmit={(data, {setSubmitting}) => {
                                 setSubmitting(true)
-                                changePassword(user.email, data.password).then(() => {
+                                changeUserPassword(user.email, data.password).then(() => {
                                     onChangePasswordModalClose()
                                     fetchUser()
                                     successNotification(
@@ -130,7 +130,7 @@ const UserItem = ({user, fetchUser}) => {
                                     console.log(err)
                                     errorNotification(
                                         err.code,
-                                        err.response.data.message
+                                        err.response?.data?.message
                                     )
                                 }).finally(() => {
                                     setSubmitting(false)

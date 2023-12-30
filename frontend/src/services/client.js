@@ -91,6 +91,30 @@ export const unblockUser = async (email) => {
     return await axios.post(`${API_BASE_URL}/users/${email}/unblock`, null, getAuthConfig())
 }
 
-export const changePassword = async (email, password) => {
+export const changeUserPassword = async (email, password) => {
     return await axios.patch(`${API_BASE_URL}/users/${email}/password`, {password}, getAuthConfig())
+}
+
+export const getProfile = async () => {
+    return await axios.get(`${API_BASE_URL}/users/profile`, getAuthConfig())
+}
+
+export const changeMyPassword = async (password) => {
+    return await axios.patch(`${API_BASE_URL}/users/password`, {password}, getAuthConfig())
+}
+
+export const changeMyName = async (name) => {
+    return await axios.patch(`${API_BASE_URL}/users/name`, {name}, getAuthConfig())
+}
+
+export const deleteSongById = async (id) => {
+    return await axios.delete(`${API_BASE_URL}/songs/${id}`, getAuthConfig())
+}
+
+export const getNextSong = async (currentSongId, currentPlaylistId) => {
+    return await axios.get(`${API_BASE_URL}/songs/${currentSongId}/next${currentPlaylistId ? `?related_playlist=${currentPlaylistId}` : ''}`, getAuthConfig())
+}
+
+export const getPreviousSong = async (currentSongId, currentPlaylistId) => {
+    return await axios.get(`${API_BASE_URL}/songs/${currentSongId}/previous${currentPlaylistId ? `?related_playlist=${currentPlaylistId}` : ''}`, getAuthConfig())
 }

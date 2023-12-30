@@ -22,7 +22,10 @@ const Header = () => {
                 >
                     Audify
                 </Heading>
-                <Avatar/>
+                <Avatar
+                    cursor={'pointer'}
+                    onClick={() => navigate('/profile')}
+                />
             </HStack>
         </GridItem>
     )

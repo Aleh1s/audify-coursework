@@ -3,14 +3,14 @@ import {createSlice} from "@reduxjs/toolkit";
 export const playerSlice = createSlice({
     name: 'player',
     initialState: {
-        currentSongId: null,
+        currentSong: null
     },
     reducers: {
-        setCurrentSongId: (state, action) => {
-            state.currentSongId = action.payload;
+        setCurrentSong: (state, action) => {
+            state.currentSong = action.payload;
         }
     }
 })
 
-export const {setCurrentSongId} = playerSlice.actions;
+export const {setCurrentSong} = playerSlice.actions;
 export default playerSlice.reducer;

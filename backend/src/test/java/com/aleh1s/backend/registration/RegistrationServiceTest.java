@@ -35,7 +35,7 @@ class RegistrationServiceTest {
     private DtoMapper dtoMapper;
 
     @Test
-    void registerUser() throws IOException {
+    void registerUser() {
         // given
         RegistrationRequest request = TestHelper.newRegistrationRequest();
         given(userService.isUserEmailExist(request.email())).willReturn(false);
@@ -49,8 +49,7 @@ class RegistrationServiceTest {
         UserEntity argumentCaptorValue = argumentCaptor.getValue();
         assertThat(argumentCaptorValue.getPassword()).isEqualTo(encodedPassword);
         assertThat(argumentCaptorValue.getAuthProvider()).isEqualTo(AuthProvider.INTERNAL);
-        assertThat(argumentCaptorValue.getFirstName()).isEqualTo(request.firstName());
-        assertThat(argumentCaptorValue.getLastName()).isEqualTo(request.lastName());
+        assertThat(argumentCaptorValue.getName()).isEqualTo(request.name());
         assertThat(argumentCaptorValue.getEmail()).isEqualTo(request.email());
         assertThat(argumentCaptorValue.getRole()).isEqualTo(UserRole.USER);
     }

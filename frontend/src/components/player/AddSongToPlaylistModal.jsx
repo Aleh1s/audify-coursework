@@ -20,19 +20,19 @@ const AddSongToPlaylistModal = ({song, isOpen, onClose}) => {
 
     const fetchPlaylists = () => {
         getPlaylists(song.id).then(res => {
-            setPlaylists(res.data)
+            setPlaylists(res.data.filter(playlist => !playlist.isLikedSongsPlaylist))
         }).catch(err => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
 
     useEffect(() => {
         fetchPlaylists()
-    }, [])
+    }, [song])
 
     const doAddSongToPlaylist = (playlistId) => {
         addSongToPlaylist(playlistId, song.id).then(() => {
@@ -45,7 +45,7 @@ const AddSongToPlaylistModal = ({song, isOpen, onClose}) => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
@@ -61,7 +61,7 @@ const AddSongToPlaylistModal = ({song, isOpen, onClose}) => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }

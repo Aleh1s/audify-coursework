@@ -56,8 +56,21 @@ public class SecurityConfig {
                             "/error"
                     ).permitAll();
                     authorize.requestMatchers(
+                            HttpMethod.GET,
+                            "/api/v1/users/profile"
+                    ).authenticated();
+                    authorize.requestMatchers(
+                            HttpMethod.PATCH,
+                            "/api/v1/users/password",
+                            "/api/v1/users/name"
+                    ).authenticated();
+                    authorize.requestMatchers(
                             HttpMethod.POST,
                             "/api/v1/songs"
+                    ).hasRole("ADMIN");
+                    authorize.requestMatchers(
+                            HttpMethod.DELETE,
+                            "/api/v1/songs/*"
                     ).hasRole("ADMIN");
                     authorize.requestMatchers(
                             "/api/v1/users/**"

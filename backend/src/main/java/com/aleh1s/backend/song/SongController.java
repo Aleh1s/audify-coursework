@@ -67,4 +67,31 @@ public class SongController {
                 .map(dtoMapper::toSongMinView);
         return ResponseEntity.ok(songs);
     }
+
+    @DeleteMapping("/{song-id}")
+    public ResponseEntity<?> deleteSong(@PathVariable("song-id") String songId) {
+        songService.deleteSongById(songId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{song-id}/next")
+    public ResponseEntity<?> getNextSong(
+            @PathVariable("song-id") String currentSongId,
+            @RequestParam(name = "related_playlist", required = false) Long relatedSongPlaylistId
+    ) {
+        SongEntity nextSong = songService.getNextSong(currentSongId, relatedSongPlaylistId);
+        SongFullView songFullView = dtoMapper.toSongFullView(nextSong);
+        return ResponseEntity.ok(songFullView);
+    }
+
+    @GetMapping("/{song-id}/previous")
+    public ResponseEntity<?> getPreviousSong(
+            @PathVariable("song-id") String currentSongId,
+            @RequestParam(name = "related_playlist", required = false) Long relatedSongPlaylistId
+    ) {
+        SongEntity previousSong = songService.getPreviousSong(currentSongId, relatedSongPlaylistId);
+        SongFullView songFullView = dtoMapper.toSongFullView(previousSong);
+        return ResponseEntity.ok(songFullView);
+    }
+
 }

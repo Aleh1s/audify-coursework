@@ -74,4 +74,8 @@ public class AudioService {
         return audioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Media with id %s does not exist".formatted(id)));
     }
+
+    public void deleteAudioById(String id) {
+        audioRepository.deleteById(id);
+    }
 }

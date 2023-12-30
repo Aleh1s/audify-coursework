@@ -5,7 +5,9 @@ import com.aleh1s.backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,17 +36,17 @@ public class PlaylistEntity {
             joinColumns = @JoinColumn(name = "playlist_id")
     )
     @Column(name = "song_id")
-    private Set<String> songs = new HashSet<>();
+    private List<String> songs = new ArrayList<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
 
-    @Column(name = "total_songs", nullable = false)
-    private int totalSongs;
-
     @Column(name = "is_liked_songs_playlist", nullable = false)
     private boolean isLikedSongsPlaylist;
+
+    @Transient
+    private int totalSongs;
 
     @Transient
     private Set<SongEntity> songEntities;
@@ -65,18 +67,16 @@ public class PlaylistEntity {
     }
 
     public boolean addSong(String songId) {
-        boolean isAdded = songs.add(songId);
-        if (isAdded) {
-            totalSongs++;
+        boolean isExist = songs.stream().anyMatch(songId::equals);
+
+        if (isExist) {
+            return false;
         }
-        return isAdded;
+
+        return songs.add(songId);
     }
 
     public boolean deleteSong(String songId) {
-        boolean isRemoved = songs.remove(songId);
-        if (isRemoved) {
-            totalSongs--;
-        }
-        return isRemoved;
+        return songs.remove(songId);
     }
 }

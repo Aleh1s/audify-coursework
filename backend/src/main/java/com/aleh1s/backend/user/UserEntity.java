@@ -105,7 +105,7 @@ public class UserEntity implements UserDetails, OAuth2User {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !this.isBlocked;
     }
 
     @Override
@@ -115,12 +115,12 @@ public class UserEntity implements UserDetails, OAuth2User {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !this.isBlocked;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !this.isBlocked;
     }
 
     public void addPlaylist(PlaylistEntity playlistEntity) {

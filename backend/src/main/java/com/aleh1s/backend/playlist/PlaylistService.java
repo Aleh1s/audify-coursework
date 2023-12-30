@@ -28,6 +28,7 @@ public class PlaylistService {
     private final ImageService imageService;
     private final SongService songService;
     private final UserService userService;
+    private final CustomSongRepository customSongRepository;
 
     @Transactional
     public void savePlaylist(PlaylistEntity playlist, MultipartFile preview) throws IOException {
@@ -64,8 +65,13 @@ public class PlaylistService {
 
     public PlaylistEntity getPlaylistByIdFetchTotalDurationInSeconds(Long id) throws IOException {
         PlaylistEntity playlist = getPlaylistById(id);
+
         long totalDurationInSeconds = songService.getTotalDurationInSecondsByIds(playlist.getSongs());
+        int totalSongs = playlistRepository.countSongsById(id);
+
         playlist.setTotalDurationInSeconds(totalDurationInSeconds);
+        playlist.setTotalSongs(totalSongs);
+
         return playlist;
     }
 
@@ -133,5 +139,9 @@ public class PlaylistService {
     public PlaylistEntity getLikedSongsPlaylist() {
         Long userId = ContextUtil.getPrincipal().getId();
         return playlistRepository.findLikedSongsPlaylistByOwnerIdFetchSongs(userId);
+    }
+
+    public void removeSongFromPlaylistsBySongId(String songId) {
+        customSongRepository.removeSongFromPlaylistsBySongId(songId);
     }
 }

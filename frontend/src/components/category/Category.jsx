@@ -26,13 +26,14 @@ const Category = () => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
 
     const fetchSongs = () => {
-        if (isLoading && params.categoryId) {
+        if (params.categoryId) {
+            setIsLoading(true)
             getSongs(query, page, limit, params.categoryId).then(res => {
                 setSongs([...songs, ...res.data.content])
                 setPage(page + 1)
@@ -50,7 +51,9 @@ const Category = () => {
     }, []);
 
     useEffect(() => {
-        fetchSongs()
+        if (isLoading) {
+            fetchSongs()
+        }
     }, [isLoading]);
 
     const handleScroll = ({target}) => {
@@ -81,7 +84,11 @@ const Category = () => {
                 css={css}
                 onScroll={handleScroll}
             >
-                {songs.map((song, index) => <SongItem key={index} song={song}/>)}
+                {songs.map((song, index) => <SongItem
+                    key={index}
+                    song={song}
+                    fetchSongs={fetchSongs}
+                />)}
             </VStack>
         </>
     )

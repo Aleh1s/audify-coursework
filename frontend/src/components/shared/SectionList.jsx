@@ -1,4 +1,4 @@
-import {Button, GridItem, Heading, Img, VStack} from "@chakra-ui/react";
+import {Button, Grid, GridItem, Heading, Img, VStack} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 
 const Section = ({section}) => {
@@ -6,19 +6,19 @@ const Section = ({section}) => {
     const navigate = useNavigate()
 
     return (
-        <Button
-            display={'grid'}
+        <Grid
             p={'10px'}
             w={'100%'}
             h={'64px'}
-            gridTemplateRows={'1fr'}
-            gridTemplateColumns={'44px 1fr'}
+            templateRows={'1fr'}
+            templateColumns={'44px 1fr'}
             gap={'0 20px'}
             bg={'none'}
             borderRadius={'5px'}
             _hover={{bg: '#4A5568'}}
             transition={'background-color 0.2s ease-in-out'}
             color={'white'}
+            cursor={'pointer'}
             onClick={() => navigate(section.onClick)}
         >
             <GridItem>
@@ -33,13 +33,14 @@ const Section = ({section}) => {
                     {section.name}
                 </Heading>
             </GridItem>
-        </Button>
+        </Grid>
     )
 }
 
 const SectionList = ({sections, ...props}) => {
     return (
         <VStack
+            w={'100%'}
             {...props}
         >
             {sections.map((section, index) => <Section key={index} section={section}/>)}

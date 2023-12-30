@@ -10,21 +10,30 @@ import {
     SliderThumb,
     SliderTrack,
     Text,
-    Tooltip, useDisclosure,
+    Tooltip,
+    useDisclosure,
     VStack
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addSongToPlaylist, getPlaylists, getSongById, removeSongFromPlaylist} from "../../services/client.js";
+import {
+    addSongToPlaylist,
+    getNextSong,
+    getPlaylists, getPreviousSong,
+    getSongById,
+    removeSongFromPlaylist
+} from "../../services/client.js";
 import {errorNotification, successNotification} from "../../services/notification.js";
 import {API_BASE_URL} from "../../constants/client.js";
 import {formatTime} from "../../utils/utils.js";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal.jsx";
 import {setPlaylists} from "../../store/userSlice.js";
+import {setCurrentSong} from "../../store/playerSlice.js";
 
 const Player = () => {
-    const currentSongId = useSelector(state => state.player.currentSongId)
+    const currentSong = useSelector(state => state.player.currentSong)
     const likedSongsPlaylistId = useSelector(state => state.user.likedSongsPlaylistId)
+
     const dispatch = useDispatch()
 
     const {isOpen, onOpen, onClose} = useDisclosure()
@@ -39,28 +48,34 @@ const Player = () => {
     const MAX_VOLUME = 100
 
     useEffect(() => {
-        if (currentSongId) {
-            getSongById(currentSongId).then(res => {
+        if (currentSong?.song?.id) {
+            setIsPlaying(false)
+            getSongById(currentSong.song.id).then(res => {
                 setSong(res.data)
-                console.log(res.data)
             }).catch(err => {
                 console.log(err)
                 errorNotification(
                     err.code,
-                    err.response.data.message
+                    err.response?.data?.message
                 )
+            }).finally(() => {
+                setIsPlaying(true)
             })
         }
-    }, [currentSongId])
+    }, [currentSong])
+
+    const play = () => {
+        audioRef.current?.play()
+        setIsPlaying(true)
+    }
+
+    const pause = () => {
+        audioRef.current?.pause()
+        setIsPlaying(false)
+    }
 
     const toggleAudio = () => {
-        if (isPlaying) {
-            audioRef.current?.pause()
-            setIsPlaying(false)
-        } else {
-            audioRef.current?.play()
-            setIsPlaying(true)
-        }
+        isPlaying ? pause() : play()
     }
 
     const handleVolume = (value) => {
@@ -75,6 +90,38 @@ const Player = () => {
         }
     }
 
+    const fetchNextSong = () => {
+        setIsPlaying(false)
+        getNextSong(song.id, currentSong?.playlist?.id).then(res => {
+            setSong(res.data)
+            dispatch(setCurrentSong({...currentSong, song: res.data}))
+        }).catch(err => {
+            console.error(err)
+            errorNotification(
+                err.code,
+                err.response?.data?.message
+            )
+        }).finally(() => {
+            setIsPlaying(true)
+        })
+    }
+
+    const fetchPreviousSong = () => {
+        setIsPlaying(false)
+        getPreviousSong(song.id, currentSong?.playlist?.id).then(res => {
+            setSong(res.data)
+            dispatch(setCurrentSong({...currentSong, song: res.data}))
+        }).catch(err => {
+            console.error(err)
+            errorNotification(
+                err.code,
+                err.response?.data?.message
+            )
+        }).finally(() => {
+            setIsPlaying(true)
+        })
+    }
+
     useEffect(() => {
         if (audioRef.current) {
             const handleTimeUpdate = () => {
@@ -82,16 +129,21 @@ const Player = () => {
             };
 
             const handleCanPlay = () => {
-                audioRef.current.play();
-                setIsPlaying(true);
+                play()
             };
+
+            const handleEnded = () => {
+                fetchNextSong()
+            }
 
             audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
             audioRef.current.addEventListener('canplay', handleCanPlay);
+            audioRef.current.addEventListener('ended', handleEnded)
 
             return () => {
-                audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
-                audioRef.current.removeEventListener('canplay', handleCanPlay);
+                audioRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
+                audioRef.current?.removeEventListener('canplay', handleCanPlay);
+                audioRef.current?.removeEventListener('ended', handleEnded)
             };
         }
     }, [song]);
@@ -103,7 +155,7 @@ const Player = () => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
@@ -121,7 +173,7 @@ const Player = () => {
                 console.log(err)
                 errorNotification(
                     err.code,
-                    err.response.data.message
+                    err.response?.data?.message
                 )
             })
         }
@@ -140,7 +192,7 @@ const Player = () => {
                 console.log(err)
                 errorNotification(
                     err.code,
-                    err.response.data.message
+                    err.response?.data?.message
                 )
             })
         }
@@ -150,10 +202,7 @@ const Player = () => {
         <>
             {
                 song?.id
-                    ? <AddSongToPlaylistModal song={song} isOpen={isOpen} onClose={() => {
-                        onClose()
-                        fetchPlaylists()
-                    }}/>
+                    ? <AddSongToPlaylistModal song={song} isOpen={isOpen} onClose={onClose}/>
                     : null
             }
             <GridItem colSpan={2} bg={'gray.800'} p={'8px'}>
@@ -195,6 +244,7 @@ const Player = () => {
                                         h={'34px'}
                                         transform={'scale(-1, 1)'}
                                         _hover={{cursor: 'pointer'}}
+                                        onClick={fetchPreviousSong}
                                     />
                                 </Tooltip>
                                 {
@@ -222,6 +272,7 @@ const Player = () => {
                                         src={'/player/skip-forward-btn.png'}
                                         h={'34px'}
                                         _hover={{cursor: 'pointer'}}
+                                        onClick={fetchNextSong}
                                     />
                                 </Tooltip>
                             </HStack>
@@ -314,7 +365,7 @@ const Player = () => {
                 </Grid>
                 {
                     song?.id
-                        ? <audio ref={audioRef} src={`${API_BASE_URL}/audios/${song.audioId}`} loop/>
+                        ? <audio ref={audioRef} src={`${API_BASE_URL}/audios/${song.audioId}`}/>
                         : null
                 }
             </GridItem>

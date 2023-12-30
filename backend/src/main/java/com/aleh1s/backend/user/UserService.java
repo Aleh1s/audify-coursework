@@ -66,4 +66,22 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(password));
     }
+
+    @Transactional
+    public void changePassword(String password) {
+        UserEntity user = getCurrentUser();
+        if (!user.getAuthProvider().equals(AuthProvider.INTERNAL)) {
+            throw new ForbiddenException("You use third party auth, you cannot change password");
+        }
+        user.setPassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void changeName(String name) {
+        UserEntity user = getCurrentUser();
+        if (!user.getAuthProvider().equals(AuthProvider.INTERNAL)) {
+            throw new ForbiddenException("You use third party auth, you cannot change name");
+        }
+        user.setName(name);
+    }
 }

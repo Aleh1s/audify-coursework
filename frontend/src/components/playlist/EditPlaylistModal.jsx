@@ -77,7 +77,7 @@ const EditPlaylistModal = ({ playlist, isOpen, onClose, onSuccess }) => {
                             console.log(err)
                             errorNotification(
                                 err.code,
-                                err.response.data.message
+                                err.response?.data?.message
                             )
                         }).finally(() => {
                             setSubmitting(false)

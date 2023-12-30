@@ -32,7 +32,7 @@ const SignInForm = () => {
                 }).catch(err => {
                     errorNotification(
                         err.code,
-                        err.response.data.message
+                        err.response?.data?.message
                     )
                 }).finally(() => {
                     setSubmitting(false)

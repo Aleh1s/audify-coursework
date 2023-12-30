@@ -21,4 +21,12 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> 
             and p.isLikedSongsPlaylist = true
             """)
     PlaylistEntity findLikedSongsPlaylistByOwnerIdFetchSongs(Long id);
+
+    @Query("""
+            select count(s)
+            from PlaylistEntity p
+            join p.songs s
+            where p.id = :id
+            """)
+    int countSongsById(Long id);
 }

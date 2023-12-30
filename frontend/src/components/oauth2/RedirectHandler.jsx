@@ -25,7 +25,7 @@ const RedirectHandler = () => {
                     console.log(err)
                     errorNotification(
                         err.code,
-                        err.response.data.message
+                        err.response?.data?.message
                     )
                 })
             } else {

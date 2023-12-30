@@ -9,7 +9,6 @@ import SongView from "./components/song/SongView.jsx";
 import GlobalPlaylist from "./components/shared/GlobalPlaylist.jsx";
 import Category from "./components/category/Category.jsx";
 import PlaylistView from "./components/playlist/PlaylistView.jsx";
-import AdminContent from "./components/admin/AdminContent.jsx";
 import AdminUsers from "./components/admin/AdminUsers.jsx";
 import {Provider} from "react-redux";
 import store from "./store/store.js";
@@ -19,6 +18,7 @@ import AuthProvider from "./context/AuthContext.jsx";
 import RedirectHandler from "./components/oauth2/RedirectHandler.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import AdminRoute from "./components/security/AdminRoute.jsx";
+import UserProfile from "./components/user/UserProfile.jsx";
 
 const {ToastContainer} = createStandaloneToast();
 const router = createBrowserRouter([
@@ -47,10 +47,6 @@ const router = createBrowserRouter([
                 element: <PlaylistView/>,
             },
             {
-                path: '/admin/content',
-                element: <AdminRoute><AdminContent/></AdminRoute>,
-            },
-            {
                 path: '/admin/users',
                 element: <AdminRoute><AdminUsers/></AdminRoute>
             }
@@ -67,6 +63,10 @@ const router = createBrowserRouter([
     {
         path: '/registration',
         element: <SignUp/>
+    },
+    {
+        path: '/profile',
+        element: <ProtectedRoute><UserProfile/></ProtectedRoute>
     }
 ])
 

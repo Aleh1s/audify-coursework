@@ -1,7 +1,7 @@
 import PlaylistList from "../playlist/PlaylistList.jsx";
 import DelimiterWithText from "./DelimiterWithText.jsx";
 import SectionList from "./SectionList.jsx";
-import {Button, GridItem, Heading, useDisclosure} from "@chakra-ui/react";
+import {Button, Grid, GridItem, Heading, useDisclosure, VStack} from "@chakra-ui/react";
 import '../../App.css'
 import CreatePlaylistModal from "../playlist/CreatePlaylistModal.jsx";
 import {AddIcon} from "@chakra-ui/icons";
@@ -11,8 +11,9 @@ import {errorNotification} from "../../services/notification.js";
 import {useDispatch} from "react-redux";
 import {useAuth} from "../../context/AuthContext.jsx";
 import AddSongModal from "../admin/AddSongModal.jsx";
+import {css} from "../../style/scroll.js";
 
-const userSections = [
+const commonsSections = [
     {
         name: 'Global Playlist',
         imageUrl: 'https://picsum.photos/100',
@@ -27,36 +28,34 @@ const userSections = [
 
 const adminSections = [
     {
-        name: 'Content',
-        imageUrl: 'https://picsum.photos/100',
-        onClick: '/admin/content'
-    },
-    {
         name: 'Users',
-        imageUrl: 'https://picsum.photos/200',
+        imageUrl: 'https://picsum.photos/400',
         onClick: '/admin/users'
     }
 ]
 
 const AddButton = ({onOpen, title}) => {
     return (
-        <Button
-            display={'grid'}
+        <Grid
             p={'10px'}
             w={'100%'}
             h={'64px'}
-            gridTemplateRows={'1fr'}
-            gridTemplateColumns={'44px 1fr'}
+            templateRows={'44px'}
+            templateColumns={'44px 1fr'}
+            alignItems={'center'}
             gap={'0 20px'}
             bg={'none'}
             borderRadius={'5px'}
             _hover={{bg: '#4A5568'}}
             transition={'background-color 0.2s ease-in-out'}
             color={'white'}
-            mb={'10px'}
             onClick={onOpen}
+            cursor={'pointer'}
         >
-            <GridItem>
+            <GridItem
+                display={'flex'}
+                justifyContent={'center'}
+            >
                 <AddIcon/>
             </GridItem>
 
@@ -65,14 +64,19 @@ const AddButton = ({onOpen, title}) => {
                     {title}
                 </Heading>
             </GridItem>
-        </Button>
+        </Grid>
     )
 }
 
 const LeftSide = () => {
 
     const {isAdmin} = useAuth()
-    const {isOpen, onOpen, onClose} = useDisclosure()
+    const {isOpen: isAddSongModalOpen, onOpen: onAddSongModalOpen, onClose: onAddSongModalClose} = useDisclosure()
+    const {
+        isOpen: isCreatePlaylistModalOpen,
+        onOpen: onCreatePlaylistModalOpen,
+        onClose: onCreatePlaylistModalClose
+    } = useDisclosure()
     const dispatch = useDispatch()
 
     const fetchPlaylists = () => {
@@ -82,71 +86,74 @@ const LeftSide = () => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
 
     const onCreatePlaylistSuccess = () => {
         fetchPlaylists()
-        onClose()
+        onCreatePlaylistModalClose()
     }
 
     const onAddSongSuccess = () => {
-        onClose()
+        onAddSongModalClose()
     }
 
     return (
-        <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
-            {
-                isAdmin()
-                    ? (
-                        <>
-                            <SectionList
-                                mb={'20px'}
-                                sections={adminSections}
-                            />
-                            <DelimiterWithText
-                                color={'white'}
-                                textBg={'gray.700'}
-                                text={'Control'}
-                            />
-                            <AddButton
-                                title={'Add Song'}
-                                onOpen={onOpen}
-                            />
-                            <AddSongModal
-                                isOpen={isOpen}
-                                onClose={onClose}
-                                onSuccess={onAddSongSuccess}
-                            />
-                        </>
-                    )
-                    : (
-                        <>
-                            <SectionList
-                                mb={'20px'}
-                                sections={userSections}
-                            />
-                            <DelimiterWithText
-                                color={'white'}
-                                text={'Playlists'}
-                                textBg={'gray.700'}
-                            />
-                            <AddButton
-                                title={'Create Playlist'}
-                                onOpen={onOpen}
-                            />
-                            <CreatePlaylistModal
-                                onSuccess={onCreatePlaylistSuccess}
-                                onClose={onClose}
-                                isOpen={isOpen}
-                            />
-                            <PlaylistList/>
-                        </>
-                    )
-            }
-        </GridItem>
+        <>
+            <AddSongModal
+                isOpen={isAddSongModalOpen}
+                onClose={onAddSongModalClose}
+                onSuccess={onAddSongSuccess}
+            />
+            <CreatePlaylistModal
+                onSuccess={onCreatePlaylistSuccess}
+                onClose={onCreatePlaylistModalClose}
+                isOpen={isCreatePlaylistModalOpen}
+            />
+            <GridItem borderRadius={'5px'} p={'20px'} bg={'gray.700'}>
+                <VStack
+                    overflowY={'auto'}
+                    maxH={'calc(100vh - 250px)'}
+                    paddingRight={'5px'}
+                    css={css}
+                    w={'100%'}
+                >
+                    {
+                        isAdmin()
+                            ? (
+                                <>
+                                    <SectionList
+                                        sections={[...commonsSections, ...adminSections]}
+                                    />
+                                    <AddButton
+                                        title={'Add Song'}
+                                        onOpen={onAddSongModalOpen}
+                                    />
+                                    <AddButton
+                                        title={'Create Playlist'}
+                                        onOpen={onCreatePlaylistModalOpen}
+                                    />
+                                    <PlaylistList/>
+                                </>
+                            )
+                            : (
+                                <>
+                                    <SectionList
+                                        sections={commonsSections}
+                                    />
+                                    <AddButton
+                                        title={'Create Playlist'}
+                                        onOpen={onCreatePlaylistModalOpen}
+                                    />
+                                    <PlaylistList/>
+                                </>
+                            )
+                    }
+                </VStack>
+            </GridItem>
+        </>
     )
 }
 

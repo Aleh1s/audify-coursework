@@ -42,7 +42,8 @@ const PlaylistView = () => {
     const dispatch = useDispatch()
 
     const fetchSongs = () => {
-        if (isLoading && params.playlistId) {
+        if (params.playlistId) {
+            setIsLoading(true)
             getSongsByPlaylistId(params.playlistId, page, limit).then(res => {
                 setSongs([...songs, ...res.data.content])
                 setPage(page + 1)
@@ -63,22 +64,28 @@ const PlaylistView = () => {
                 console.log(err)
                 errorNotification(
                     err.code,
-                    err.response.data.message
+                    err.response?.data?.message
                 )
             })
         }
     }
 
-    useEffect(() => {
+    const clearSongsAndFetchPlaylist = () => {
         setSongs([])
         setPage(0)
         setTotalCount(0)
         setIsLoading(true)
         fetchPlaylist()
+    }
+
+    useEffect(() => {
+        clearSongsAndFetchPlaylist()
     }, [params.playlistId])
 
     useEffect(() => {
-        fetchSongs()
+        if (isLoading) {
+            fetchSongs()
+        }
     }, [isLoading]);
 
     const handleScroll = ({target}) => {
@@ -108,7 +115,7 @@ const PlaylistView = () => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         })
     }
@@ -214,7 +221,12 @@ const PlaylistView = () => {
                             w={'100%'}
                             spacing={'20px'}
                         >
-                            {songs.map((song, index) => <SongItem key={index} song={song}/>)}
+                            {songs.map((song, index) => <SongItem
+                                key={index}
+                                song={song}
+                                fetchSongs={clearSongsAndFetchPlaylist}
+                                playlist={playlist}
+                            />)}
                         </VStack>
                 }
             </VStack>

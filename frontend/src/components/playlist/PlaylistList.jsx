@@ -1,4 +1,4 @@
-import {Button, Center, GridItem, Heading, Img, Spinner, Text, VStack} from "@chakra-ui/react";
+import {Button, Center, Grid, GridItem, Heading, Img, Spinner, Text, VStack} from "@chakra-ui/react";
 import {css} from "../../style/scroll.js";
 import {useEffect, useState} from "react";
 import {getPlaylists} from "../../services/client.js";
@@ -13,13 +13,12 @@ const Playlist = ({playlist}) => {
     const navigate = useNavigate()
 
     return (
-        <Button
-            display={'grid'}
+        <Grid
             p={'10px'}
             w={'100%'}
             h={'64px'}
-            gridTemplateRows={'1fr'}
-            gridTemplateColumns={'44px 1fr'}
+            templateRows={'1fr'}
+            templateColumns={'44px 1fr'}
             bg={'none'}
             gap={'0 20px'}
             borderRadius={'5px'}
@@ -27,6 +26,7 @@ const Playlist = ({playlist}) => {
             transition={'background-color 0.2s ease-in-out'}
             color={'white'}
             onClick={() => navigate(`/playlist/${playlist.id}`)}
+            cursor={'pointer'}
         >
             <GridItem>
                 <Img src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`} borderRadius={'5px'}/>
@@ -35,16 +35,13 @@ const Playlist = ({playlist}) => {
             <GridItem
                 display={'flex'}
                 flexDirection={'column'}
-                alignItems={'start'}
+                justifyContent={'center'}
             >
                 <Heading mb={'3px'} size={'sm'}>
                     {playlist.name}
                 </Heading>
-                <Text fontSize={'12px'} color={'gray.400'}>
-                    {playlist.totalSongs} songs
-                </Text>
             </GridItem>
-        </Button>
+        </Grid>
     )
 }
 
@@ -62,7 +59,7 @@ const PlaylistList = () => {
             console.log(err)
             errorNotification(
                 err.code,
-                err.response.data.message
+                err.response?.data?.message
             )
         }).finally(() => {
             setIsLoading(false)
@@ -91,10 +88,7 @@ const PlaylistList = () => {
                         />
                     </Center>
                     : <VStack
-                        overflowY={'auto'}
-                        maxH={'calc(100vh - 520px)'}
-                        paddingRight={'5px'}
-                        css={css}
+                     w={'100%'}
                     >
                         {playlists.map((playlist, index) => <Playlist key={index} playlist={playlist}/>)}
                     </VStack>
