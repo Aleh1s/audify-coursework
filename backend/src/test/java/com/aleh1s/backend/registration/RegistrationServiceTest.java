@@ -1,11 +1,11 @@
 package com.aleh1s.backend.registration;
 
 import com.aleh1s.backend.TestHelper;
+import com.aleh1s.backend.dto.DtoMapper;
 import com.aleh1s.backend.user.AuthProvider;
 import com.aleh1s.backend.user.UserEntity;
 import com.aleh1s.backend.user.UserRole;
 import com.aleh1s.backend.user.UserService;
-import com.aleh1s.backend.dto.DtoMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -48,8 +48,7 @@ class RegistrationServiceTest {
         UserEntity argumentCaptorValue = argumentCaptor.getValue();
         assertThat(argumentCaptorValue.getPassword()).isEqualTo(encodedPassword);
         assertThat(argumentCaptorValue.getAuthProvider()).isEqualTo(AuthProvider.INTERNAL);
-        assertThat(argumentCaptorValue.getFirstName()).isEqualTo(request.firstName());
-        assertThat(argumentCaptorValue.getLastName()).isEqualTo(request.lastName());
+        assertThat(argumentCaptorValue.getName()).isEqualTo(request.name());
         assertThat(argumentCaptorValue.getEmail()).isEqualTo(request.email());
         assertThat(argumentCaptorValue.getRole()).isEqualTo(UserRole.USER);
     }

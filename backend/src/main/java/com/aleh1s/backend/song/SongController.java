@@ -51,12 +51,12 @@ public class SongController {
     @GetMapping("/categories/{category-id}")
     public ResponseEntity<?> getSongsByCategory(
             @PathVariable("category-id") int categoryId,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "limit", required = false, defaultValue = "10") int limit
     ) {
         Page<SongMinView> songs = songService.getSongsByCategory(
                 MusicCategory.getCategoryById(categoryId),
-                PaginationUtils.getPageRequest(offset, limit)
+                PaginationUtils.getPageRequest(page, limit)
         ).map(dtoMapper::toSongMinView);
         return ResponseEntity.ok(songs);
     }
@@ -67,4 +67,31 @@ public class SongController {
                 .map(dtoMapper::toSongMinView);
         return ResponseEntity.ok(songs);
     }
+
+    @DeleteMapping("/{song-id}")
+    public ResponseEntity<?> deleteSong(@PathVariable("song-id") String songId) {
+        songService.deleteSongById(songId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{song-id}/next")
+    public ResponseEntity<?> getNextSong(
+            @PathVariable("song-id") String currentSongId,
+            @RequestParam(name = "related_playlist", required = false) Long relatedSongPlaylistId
+    ) {
+        SongEntity nextSong = songService.getNextSong(currentSongId, relatedSongPlaylistId);
+        SongFullView songFullView = dtoMapper.toSongFullView(nextSong);
+        return ResponseEntity.ok(songFullView);
+    }
+
+    @GetMapping("/{song-id}/previous")
+    public ResponseEntity<?> getPreviousSong(
+            @PathVariable("song-id") String currentSongId,
+            @RequestParam(name = "related_playlist", required = false) Long relatedSongPlaylistId
+    ) {
+        SongEntity previousSong = songService.getPreviousSong(currentSongId, relatedSongPlaylistId);
+        SongFullView songFullView = dtoMapper.toSongFullView(previousSong);
+        return ResponseEntity.ok(songFullView);
+    }
+
 }

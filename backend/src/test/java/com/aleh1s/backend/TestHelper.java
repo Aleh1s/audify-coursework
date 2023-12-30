@@ -12,8 +12,7 @@ public class TestHelper {
 
     public static UserEntity newUserEntity() {
         return new UserEntity(
-                FAKER.name().firstName(),
-                FAKER.name().lastName(),
+                FAKER.name().fullName(),
                 FAKER.internet().emailAddress(),
                 FAKER.internet().password(),
                 UserRole.USER,
@@ -23,8 +22,7 @@ public class TestHelper {
 
     public static RegistrationRequest newRegistrationRequest() {
         return new RegistrationRequest(
-                FAKER.name().firstName(),
-                FAKER.name().lastName(),
+                FAKER.name().fullName(),
                 FAKER.internet().emailAddress(),
                 FAKER.internet().password()
         );
