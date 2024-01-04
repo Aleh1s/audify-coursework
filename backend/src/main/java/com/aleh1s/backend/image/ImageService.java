@@ -60,4 +60,8 @@ public class ImageService {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Media with id %s does not exist".formatted(id)));
     }
+
+    public void deleteImageById(String id) {
+        imageRepository.deleteById(id);
+    }
 }

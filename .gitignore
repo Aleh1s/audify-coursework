@@ -43,5 +43,4 @@
 
 # commons
 /.idea/
-/docker-compose.yml
 /backend/backend.iml

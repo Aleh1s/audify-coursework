@@ -11,6 +11,7 @@ public record SongFullView(
         String text,
         String previewId,
         String audioId,
-        long durationInSeconds
+        long durationInSeconds,
+        boolean isLiked
 ) {
 }

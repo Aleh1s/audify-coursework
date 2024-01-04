@@ -3,6 +3,7 @@ package com.aleh1s.backend.song;
 import com.aleh1s.backend.constant.Indices;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -46,6 +47,9 @@ public class SongEntity {
 
     @Field(type = FieldType.Keyword)
     private String audioId;
+
+    @Transient
+    private boolean isLiked;
 
     public SongEntity(
             String name,
