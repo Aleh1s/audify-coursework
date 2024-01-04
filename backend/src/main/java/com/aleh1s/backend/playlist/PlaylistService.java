@@ -65,6 +65,11 @@ public class PlaylistService {
 
     public PlaylistEntity getPlaylistByIdFetchTotalDurationInSeconds(Long id) throws IOException {
         PlaylistEntity playlist = getPlaylistById(id);
+        UserEntity currentUser = ContextUtil.getPrincipal();
+
+        if (!playlist.getOwner().getId().equals(currentUser.getId())) {
+            throw new ForbiddenException("You don't have permission to access this playlist");
+        }
 
         long totalDurationInSeconds = songService.getTotalDurationInSecondsByIds(playlist.getSongs());
         int totalSongs = playlistRepository.countSongsById(id);

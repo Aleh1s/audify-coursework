@@ -31,9 +31,10 @@ const PlaylistView = () => {
 
     const limit = 10
     const params = useParams()
-    const [playlist, setPlaylist] = useState({})
+    const [playlist, setPlaylist] = useState(null)
     const [songs, setSongs] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [isPlaylistLoading, setIsPlaylistLoading] = useState(false)
     const [page, setPage] = useState(0)
     const [totalCount, setTotalCount] = useState(0)
     const {isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose} = useDisclosure()
@@ -58,14 +59,18 @@ const PlaylistView = () => {
 
     const fetchPlaylist = () => {
         if (params.playlistId) {
+            setIsPlaylistLoading(true)
             getPlaylistById(params.playlistId).then(res => {
                 setPlaylist(res.data)
+                setIsLoading(true)
             }).catch(err => {
                 console.log(err)
                 errorNotification(
                     err.code,
                     err.response?.data?.message
                 )
+            }).finally(() => {
+                setIsPlaylistLoading(false)
             })
         }
     }
@@ -74,7 +79,6 @@ const PlaylistView = () => {
         setSongs([])
         setPage(0)
         setTotalCount(0)
-        setIsLoading(true)
         fetchPlaylist()
     }
 
@@ -128,108 +132,131 @@ const PlaylistView = () => {
 
     return (
         <>
-            <DeletePlaylistModal
-                playlist={playlist}
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                onSuccess={onDeleteSuccess}
-            />
-            <EditPlaylistModal
-                playlist={playlist}
-                onClose={onEditClose}
-                isOpen={isEditOpen}
-                onSuccess={onEditSuccess}
-            />
-            <VStack
-                spacing={'20px'}
-                overflowY={'scroll'}
-                maxH={'calc(100vh - 250px)'}
-                paddingRight={'10px'}
-                css={css}
-                onScroll={handleScroll}
-            >
-                <Grid
-                    templateRows={'250px'}
-                    templateColumns={'250px 1fr'}
-                    w={'100%'}
-                    gap={'0 30px'}
-                >
-                    <GridItem>
-                        <Img
-                            src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`}
-                            borderRadius={'5px'} h={'250px'}/>
-                    </GridItem>
-                    <GridItem>
+            {
+                !playlist
+                    ? <Center
+                        h={'100%'}
+                    >
+                        {
+                            isPlaylistLoading
+                                ? <Spinner
+                                    thickness='4px'
+                                    speed='0.65s'
+                                    emptyColor='gray.200'
+                                    color='blue.500'
+                                    size='xl'
+                                />
+                                : <Text
+                                    fontSize={'2xl'}
+                                >
+                                    Playlist Not Found
+                                </Text>
+                        }
+                    </Center>
+                    : <>
+                        <DeletePlaylistModal
+                            playlist={playlist}
+                            isOpen={isDeleteOpen}
+                            onClose={onDeleteClose}
+                            onSuccess={onDeleteSuccess}
+                        />
+                        <EditPlaylistModal
+                            playlist={playlist}
+                            onClose={onEditClose}
+                            isOpen={isEditOpen}
+                            onSuccess={onEditSuccess}
+                        />
                         <VStack
-                            alignItems={'start'}
-                            spacing={'10px'}
-                        >
-                            <HStack
-                                justifyContent={'space-between'}
-                                w={'100%'}
-                            >
-                                <Heading size={'xl'}>{playlist.name}</Heading>
-                                {
-                                    !playlist.isLikedSongsPlaylist
-                                        ? <Menu>
-                                            {({isOpen}) => (
-                                                <>
-                                                    <MenuButton isActive={isOpen}>
-                                                        <Img
-                                                            src={'/player/three-dots-btn.png'}
-                                                            w={'25px'}
-                                                            _hover={{cursor: 'pointer'}}
-                                                        />
-                                                    </MenuButton>
-                                                    <MenuList color={'black'}>
-                                                        <MenuItem onClick={onEditOpen}>Edit</MenuItem>
-                                                        <MenuItem onClick={onDeleteOpen}>Delete</MenuItem>
-                                                    </MenuList>
-                                                </>
-                                            )}
-                                        </Menu>
-                                        : null
-                                }
-
-                            </HStack>
-                            <Text color={'gray.400'}>{playlist.totalSongs} songs
-                                | {formatDuration(playlist.totalDurationInSeconds)}</Text>
-                        </VStack>
-                    </GridItem>
-                </Grid>
-                <DelimiterWithText
-                    w={'100%'}
-                    color={'white'}
-                    text={'Songs'}
-                    textBg={'gray.700'}
-                />
-                {
-                    isLoading && songs.length === 0
-                        ? <Center
-                            h={'calc(100vh - 350px)'}
-                            w={'100%'}
-                        >
-                            <Spinner
-                                thickness='4px'
-                                speed='0.65s'
-                                emptyColor='gray.200'
-                                color='blue.500'
-                                size='xl'
-                            />
-                        </Center>
-                        : <VStack
-                            w={'100%'}
                             spacing={'20px'}
+                            overflowY={'scroll'}
+                            maxH={'calc(100vh - 250px)'}
+                            paddingRight={'10px'}
+                            css={css}
+                            onScroll={handleScroll}
                         >
-                            {songs.map((song, index) => <SongItem
-                                key={index}
-                                song={song}
-                                fetchSongs={clearSongsAndFetchPlaylist}
-                                playlist={playlist}
-                            />)}
+                            <Grid
+                                templateRows={'250px'}
+                                templateColumns={'250px 1fr'}
+                                w={'100%'}
+                                gap={'0 30px'}
+                            >
+                                <GridItem>
+                                    <Img
+                                        src={playlist.isLikedSongsPlaylist ? '/playlist/liked-songs-playlist-preview.png' : `${API_BASE_URL}/images/${playlist.previewId}`}
+                                        borderRadius={'5px'} h={'250px'}/>
+                                </GridItem>
+                                <GridItem>
+                                    <VStack
+                                        alignItems={'start'}
+                                        spacing={'10px'}
+                                    >
+                                        <HStack
+                                            justifyContent={'space-between'}
+                                            w={'100%'}
+                                        >
+                                            <Heading size={'xl'}>{playlist.name}</Heading>
+                                            {
+                                                !playlist.isLikedSongsPlaylist
+                                                    ? <Menu>
+                                                        {({isOpen}) => (
+                                                            <>
+                                                                <MenuButton isActive={isOpen}>
+                                                                    <Img
+                                                                        src={'/player/three-dots-btn.png'}
+                                                                        w={'25px'}
+                                                                        _hover={{cursor: 'pointer'}}
+                                                                    />
+                                                                </MenuButton>
+                                                                <MenuList color={'black'}>
+                                                                    <MenuItem onClick={onEditOpen}>Edit</MenuItem>
+                                                                    <MenuItem onClick={onDeleteOpen}>Delete</MenuItem>
+                                                                </MenuList>
+                                                            </>
+                                                        )}
+                                                    </Menu>
+                                                    : null
+                                            }
+
+                                        </HStack>
+                                        <Text color={'gray.400'}>{playlist.totalSongs} songs
+                                            | {formatDuration(playlist.totalDurationInSeconds)}</Text>
+                                    </VStack>
+                                </GridItem>
+                            </Grid>
+                            <DelimiterWithText
+                                w={'100%'}
+                                color={'white'}
+                                text={'Songs'}
+                                textBg={'gray.700'}
+                            />
+                            {
+                                isLoading && songs.length === 0
+                                    ? <Center
+                                        h={'calc(100vh - 350px)'}
+                                        w={'100%'}
+                                    >
+                                        <Spinner
+                                            thickness='4px'
+                                            speed='0.65s'
+                                            emptyColor='gray.200'
+                                            color='blue.500'
+                                            size='xl'
+                                        />
+                                    </Center>
+                                    : <VStack
+                                        w={'100%'}
+                                        spacing={'20px'}
+                                    >
+                                        {songs.map((song, index) => <SongItem
+                                            key={index}
+                                            song={song}
+                                            playlist={playlist}
+                                        />)}
+                                    </VStack>
+                            }
                         </VStack>
-                }
-            </VStack>
+                    </>
+            }
         </>
     )
 }

@@ -1,6 +1,6 @@
 import PlaylistList from "../playlist/PlaylistList.jsx";
 import SectionList from "./SectionList.jsx";
-import {Grid, GridItem, Heading, useDisclosure, VStack} from "@chakra-ui/react";
+import {Divider, Grid, GridItem, Heading, useDisclosure, VStack} from "@chakra-ui/react";
 import '../../App.css'
 import CreatePlaylistModal from "../playlist/CreatePlaylistModal.jsx";
 import {AddIcon} from "@chakra-ui/icons";
@@ -126,6 +126,7 @@ const LeftSide = () => {
                                     <SectionList
                                         sections={[...commonsSections, ...adminSections]}
                                     />
+                                    <Divider />
                                     <AddButton
                                         title={'Add Song'}
                                         onOpen={onAddSongModalOpen}
@@ -134,6 +135,7 @@ const LeftSide = () => {
                                         title={'Create Playlist'}
                                         onOpen={onCreatePlaylistModalOpen}
                                     />
+                                    <Divider />
                                     <PlaylistList/>
                                 </>
                             )
@@ -142,14 +144,17 @@ const LeftSide = () => {
                                     <SectionList
                                         sections={commonsSections}
                                     />
+                                    <Divider />
                                     <AddButton
                                         title={'Create Playlist'}
                                         onOpen={onCreatePlaylistModalOpen}
                                     />
+                                    <Divider />
                                     <PlaylistList/>
                                 </>
                             )
                     }
+
                 </VStack>
             </GridItem>
         </>

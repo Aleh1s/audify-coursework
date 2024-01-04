@@ -36,12 +36,16 @@ import {MyInput} from "../shared/Inputs.jsx";
 import {CheckIcon, CloseIcon, EditIcon} from "@chakra-ui/icons";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.jsx";
+import {useDispatch} from "react-redux";
+import {removeUser} from "../../store/userSlice.js";
+import {removePlayer} from "../../store/playerSlice.js";
 
 const UserProfile = () => {
 
     const [user, setUser] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const {isOpen, onOpen, onClose} = useDisclosure()
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
     const {logout} = useAuth()
@@ -111,6 +115,8 @@ const UserProfile = () => {
 
     const logOut = () => {
         logout()
+        dispatch(removeUser())
+        dispatch(removePlayer())
         navigate('/login')
     }
 
