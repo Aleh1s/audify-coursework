@@ -87,7 +87,6 @@ const Category = () => {
                 {songs.map((song, index) => <SongItem
                     key={index}
                     song={song}
-                    fetchSongs={fetchSongs}
                 />)}
             </VStack>
         </>

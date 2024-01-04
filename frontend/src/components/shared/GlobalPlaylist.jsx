@@ -80,7 +80,6 @@ const GlobalPlaylist = () => {
                         {songs.map((song, index) => <SongItem
                             key={index}
                             song={song}
-                            fetchSongs={onSearch}
                         />)}
                     </VStack>
             }

@@ -28,28 +28,25 @@ import {API_BASE_URL} from "../../constants/client.js";
 import {formatTime} from "../../utils/utils.js";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal.jsx";
 import {setPlaylists} from "../../store/userSlice.js";
-import {setCurrentSong} from "../../store/playerSlice.js";
+import {pauseSong, playSong, setCurrentSong} from "../../store/playerSlice.js";
 
 const Player = () => {
     const currentSong = useSelector(state => state.player.currentSong)
+    const isSongPlaying = useSelector(state => state.player.isSongPlaying)
     const likedSongsPlaylistId = useSelector(state => state.user.likedSongsPlaylistId)
 
     const dispatch = useDispatch()
-
     const {isOpen, onOpen, onClose} = useDisclosure()
-
     const [song, setSong] = useState(null)
     const audioRef = useRef(null)
-
-    const [isPlaying, setIsPlaying] = useState(false)
 
     const [currentTime, setCurrentTime] = useState(0)
 
     const MAX_VOLUME = 100
 
     useEffect(() => {
-        if (currentSong?.song?.id) {
-            setIsPlaying(false)
+        if (currentSong?.song) {
+            pause()
             getSongById(currentSong.song.id).then(res => {
                 setSong(res.data)
             }).catch(err => {
@@ -58,24 +55,24 @@ const Player = () => {
                     err.code,
                     err.response?.data?.message
                 )
-            }).finally(() => {
-                setIsPlaying(true)
             })
         }
     }, [currentSong])
 
     const play = () => {
         audioRef.current?.play()
-        setIsPlaying(true)
     }
 
     const pause = () => {
         audioRef.current?.pause()
-        setIsPlaying(false)
     }
 
+    useEffect(() => {
+        isSongPlaying ? play() : pause()
+    }, [isSongPlaying])
+
     const toggleAudio = () => {
-        isPlaying ? pause() : play()
+        isSongPlaying ? dispatch(pauseSong()) : dispatch(playSong())
     }
 
     const handleVolume = (value) => {
@@ -91,34 +88,37 @@ const Player = () => {
     }
 
     const fetchNextSong = () => {
-        setIsPlaying(false)
-        getNextSong(song.id, currentSong?.playlist?.id).then(res => {
-            setSong(res.data)
-            dispatch(setCurrentSong({...currentSong, song: res.data}))
+        const playlistId = currentSong?.playlist?.id || likedSongsPlaylistId
+        getNextSong(song.id, playlistId).then(res => {
+            const song = res.data
+            if (song?.id !== currentSong?.song?.id) {
+                pause()
+                setSong(res.data)
+                dispatch(setCurrentSong({...currentSong, song: res.data}))
+            }
         }).catch(err => {
             console.error(err)
             errorNotification(
                 err.code,
                 err.response?.data?.message
             )
-        }).finally(() => {
-            setIsPlaying(true)
         })
     }
 
     const fetchPreviousSong = () => {
-        setIsPlaying(false)
         getPreviousSong(song.id, currentSong?.playlist?.id).then(res => {
-            setSong(res.data)
-            dispatch(setCurrentSong({...currentSong, song: res.data}))
+            const song = res.data
+            if (song?.id !== currentSong?.song?.id) {
+                pause()
+                setSong(res.data)
+                dispatch(setCurrentSong({...currentSong, song: res.data}))
+            }
         }).catch(err => {
             console.error(err)
             errorNotification(
                 err.code,
                 err.response?.data?.message
             )
-        }).finally(() => {
-            setIsPlaying(true)
         })
     }
 
@@ -248,7 +248,7 @@ const Player = () => {
                                     />
                                 </Tooltip>
                                 {
-                                    isPlaying
+                                    isSongPlaying
                                         ?
                                         <Tooltip label={'Pause'}>
                                             <Img
@@ -364,7 +364,7 @@ const Player = () => {
                     </GridItem>
                 </Grid>
                 {
-                    song?.id
+                    song
                         ? <audio ref={audioRef} src={`${API_BASE_URL}/audios/${song.audioId}`}/>
                         : null
                 }

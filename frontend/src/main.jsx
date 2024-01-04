@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import {ChakraProvider, createStandaloneToast} from "@chakra-ui/react";
+import {Center, ChakraProvider, createStandaloneToast} from "@chakra-ui/react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Main from "./pages/Main.jsx";
 import CategoryList from "./components/category/CategoryList.jsx";
@@ -19,6 +19,7 @@ import RedirectHandler from "./components/oauth2/RedirectHandler.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import AdminRoute from "./components/security/AdminRoute.jsx";
 import UserProfile from "./components/user/UserProfile.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const {ToastContainer} = createStandaloneToast();
 const router = createBrowserRouter([
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
     {
         path: '/profile',
         element: <ProtectedRoute><UserProfile/></ProtectedRoute>
+    },
+    {
+        path: '*',
+        element: <NotFoundPage/>
     }
 ])
 

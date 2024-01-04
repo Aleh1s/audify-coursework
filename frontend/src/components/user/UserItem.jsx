@@ -11,27 +11,18 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Stack,
     Tag,
     Text,
     useDisclosure
 } from "@chakra-ui/react";
 import {LockIcon, UnlockIcon} from "@chakra-ui/icons";
-import {blockUser, changeUserPassword, unblockUser} from "../../services/client.js";
+import {blockUser, unblockUser} from "../../services/client.js";
 import {errorNotification, successNotification} from "../../services/notification.js";
 import {useState} from "react";
-import * as Yup from "yup";
-import {Form, Formik} from "formik";
-import {MyInput} from "../shared/Inputs.jsx";
 
 const UserItem = ({user, fetchUser}) => {
 
     const {onOpen: onBlockUserModalOpen, isOpen: isBlockUserModalOpen, onClose: onBlockUserModalClose} = useDisclosure()
-    const {
-        onOpen: onChangePasswordModalOpen,
-        isOpen: isChangePasswordModalOpen,
-        onClose: onChangePasswordModalClose
-    } = useDisclosure()
     const [isLoading, setIsLoading] = useState(false)
 
     const doBlockUser = () => {
@@ -94,76 +85,9 @@ const UserItem = ({user, fetchUser}) => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            <Modal isOpen={isChangePasswordModalOpen} onClose={onChangePasswordModalClose}>
-                <ModalOverlay/>
-                <ModalContent bg={'gray.700'} color={'white'}>
-                    <ModalHeader>Change User Password</ModalHeader>
-                    <ModalCloseButton/>
-                    <ModalBody>
-                        <Text mb={5}>Write new password for {user.email}</Text>
-
-                        <Formik
-                            validateOnMount={true}
-                            initialValues={{
-                                password: '',
-                            }}
-                            validationSchema={Yup.object({
-                                password: Yup.string()
-                                    .required('Password is required')
-                                    .min(8, 'Password must be at least 8 characters')
-                                    .max(64, 'Password must not exceed 64 characters')
-                                    .matches(
-                                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&])[A-Za-z\d!@#$%^&]+$/,
-                                        'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!, @, #, $, %, ^, &)'
-                                    ),
-                            })}
-                            onSubmit={(data, {setSubmitting}) => {
-                                setSubmitting(true)
-                                changeUserPassword(user.email, data.password).then(() => {
-                                    onChangePasswordModalClose()
-                                    fetchUser()
-                                    successNotification(
-                                        "Success",
-                                        "Password changed"
-                                    )
-                                }).catch(err => {
-                                    console.log(err)
-                                    errorNotification(
-                                        err.code,
-                                        err.response?.data?.message
-                                    )
-                                }).finally(() => {
-                                    setSubmitting(false)
-                                })
-                            }}
-                        >
-                            {({isValid, isSubmitting}) => (
-                                <Form>
-                                    <Stack spacing={4}>
-                                        <MyInput
-                                            label="Password"
-                                            name="password"
-                                            type="password"
-                                            placeholder="********"
-                                        />
-
-                                        <Button
-                                            type={"submit"}
-                                            isDisabled={!isValid || isSubmitting}
-                                            colorScheme={'green'}
-                                        >
-                                            Change Password
-                                        </Button>
-                                    </Stack>
-                                </Form>
-                            )}
-                        </Formik>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
             <Grid
                 templateRows={'min-content)'}
-                templateColumns={'1fr 1fr 1fr 1fr 1fr'}
+                templateColumns={'1fr 1fr 1fr 1fr'}
                 w={'100%'}
                 alignItems={'center'}
                 gap={'0 15px'}
@@ -183,17 +107,6 @@ const UserItem = ({user, fetchUser}) => {
 
                 <GridItem>
                     <Text textAlign={'center'}>{user.authProvider}</Text>
-                </GridItem>
-
-                <GridItem>
-                    {
-                        <Button
-                            isDisabled={user.authProvider !== 'INTERNAL' || isLoading}
-                            onClick={onChangePasswordModalOpen}
-                        >
-                            Change password
-                        </Button>
-                    }
                 </GridItem>
 
                 <GridItem>

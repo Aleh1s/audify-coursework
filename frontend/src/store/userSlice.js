@@ -12,9 +12,17 @@ export const userSlice = createSlice({
         },
         setPlaylists: (state, action) => {
             state.playlists = action.payload;
+        },
+        removeUser: (state) => {
+            state.likedSongsPlaylistId = null;
+            state.playlists = [];
         }
     }
 })
 
-export const {setLikedSongsPlaylistId, setPlaylists} = userSlice.actions;
+export const {
+    setLikedSongsPlaylistId,
+    setPlaylists,
+    removeUser
+} = userSlice.actions;
 export default userSlice.reducer;
