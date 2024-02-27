@@ -88,8 +88,7 @@ const Player = () => {
     }
 
     const fetchNextSong = () => {
-        const playlistId = currentSong?.playlist?.id || likedSongsPlaylistId
-        getNextSong(song.id, playlistId).then(res => {
+        getNextSong(song.id, currentSong?.playlist?.id).then(res => {
             const song = res.data
             if (song?.id !== currentSong?.song?.id) {
                 pause()

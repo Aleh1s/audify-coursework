@@ -79,7 +79,7 @@ const Category = () => {
             <VStack
                 spacing={'20px'}
                 overflowY={'auto'}
-                maxH={'calc(100vh - 290px)'}
+                maxH={'calc(100vh - 350px)'}
                 paddingRight={'10px'}
                 css={css}
                 onScroll={handleScroll}

@@ -250,6 +250,15 @@ public class SongService {
             return getSongById(currentSongId);
         }
 
+        int index = songs.indexOf(currentSongId);
+        if (index != -1) {
+            if (index == songs.size() - 1) {
+                return getSongById(songs.getFirst());
+            }
+
+            return getSongById(songs.get(index + 1));
+        }
+
         return getSongById(songs.getFirst());
     }
 
@@ -278,6 +287,15 @@ public class SongService {
 
         if (songs.isEmpty()) {
             return getSongById(currentSongId);
+        }
+
+        int index = songs.indexOf(currentSongId);
+        if (index != -1) {
+            if (index == 0) {
+                return getSongById(currentSongId);
+            }
+
+            return getSongById(songs.get(index - 1));
         }
 
         return getSongById(songs.getFirst());
